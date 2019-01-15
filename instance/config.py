@@ -28,3 +28,11 @@ class ProductionConfig(Config):
 
     DEBUG = False
     TESTING = False
+
+
+app_config = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'staging': StagingConfig,
+    'production': ProductionConfig
+}
