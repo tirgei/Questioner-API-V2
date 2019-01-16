@@ -14,9 +14,9 @@ create_table_queries = [
         firstname VARCHAR(250) NOT NULL,
         lastname VARCHAR(250) NOT NULL,
         othername VARCHAR(250) NULL,
-        username VARCHAR(250) NOT NULL UNIQUE,
+        username VARCHAR(250) NOT NULL,
         phonenumber VARCHAR(250) NULL,
-        email VARCHAR(250) NOT NULL UNIQUE,
+        email VARCHAR(250) NOT NULL,
         password VARCHAR(250) NOT NULL,
         registered TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
