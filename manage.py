@@ -1,6 +1,6 @@
 import argparse
 from db.db_config import connect_db
-from db.db_tables import create_tables, drop_tables, truncate, seed_db
+from db.db_tables import create_tables, drop_tables, truncate
 
 
 def migrate(connection):
@@ -14,8 +14,8 @@ if __name__ == "__main__":
         description='Postgres Database management tool for Questioner')
 
     parser.add_argument(
-        '-a', '--action', metavar='[migrate|truncate|seed]', help='Action',
-        choices={'migrate', 'truncate', 'seed'}, const='migrate', nargs='?')
+        '-a', '--action', metavar='[migrate|truncate]', help='Action',
+        choices={'migrate', 'truncate'}, const='migrate', nargs='?')
 
     args = parser.parse_args()
 
@@ -25,8 +25,6 @@ if __name__ == "__main__":
         migrate(conn)
     elif args.action == 'truncate':
         truncate(conn)
-    elif args.action == 'seed':
-        seed_db(conn)
     else:
         pass
 
