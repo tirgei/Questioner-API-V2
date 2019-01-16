@@ -1,4 +1,5 @@
 # Questioner
+
 [![Build Status](https://travis-ci.com/tirgei/Questioner-API-V2.svg?branch=develop)](https://travis-ci.com/tirgei/Questioner-API-V2)
 [![Coverage Status](https://coveralls.io/repos/github/tirgei/Questioner-API-V2/badge.svg?branch=develop)](https://coveralls.io/github/tirgei/Questioner-API-V2?branch=develop)
 [![BCH compliance](https://bettercodehub.com/edge/badge/tirgei/Questioner-API-V2?branch=develop)](https://bettercodehub.com/)
@@ -16,6 +17,7 @@ The repo for the version 1 of the API is available at [Questioner-API](https://g
 
 - [VS Code](https://code.visualstudio.com)
 - [Python 3.6](https://www.python.org)
+- [Postgres](https://www.postgresql.org)
 
 ## Installation
 
@@ -23,6 +25,13 @@ The repo for the version 1 of the API is available at [Questioner-API](https://g
 
 ```console
 foo@bar:~$ git clone https://github.com/tirgei/Questioner-API.git
+```
+
+- Create the psql databases
+
+```console
+foo@bar:~$ createdb questioner_db
+foo@bar:~$ createdb questioner_test_db
 ```
 
 - CD into the folder
@@ -41,6 +50,19 @@ foo@bar:~$ python3 -m venv env
 
 ```console
 foo@bar:~$ source env/bin/activate
+```
+
+- Install dependencies
+
+```console
+foo@bar:~$ pip install -r requirements.txt
+```
+
+- Set the environment variables
+
+```console
+foo@bar:~$ mv .env.example .env
+foo@bar:~$ source .env
 ```
 
 - Run the tests
