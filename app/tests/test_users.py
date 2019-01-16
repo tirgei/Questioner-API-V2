@@ -65,7 +65,7 @@ class TestUser(BaseTest):
         self.assertEqual(data['status'], 400)
         self.assertEqual(data['message'], 'Invalid data provided')
 
-    def test_sign_up_invalid_password(self):
+    def test_sign_up_short_password(self):
         """ Test sign up with a short password """
 
         self.user.update({'password': 'fdsg'})
@@ -86,3 +86,39 @@ class TestUser(BaseTest):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'User created successfully')
+
+    def test_sign_up_same_username(self):
+        """ Test sign up with same username """
+
+        self.client.post('/api/v2/auth/signup', json=self.user)
+
+        self.user.update({
+            'firstname': 'John',
+            'lastname': 'Doe',
+            'email': 'jd@gmail.com'
+        })
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Username already exists')
+
+    def test_sign_up_same_email(self):
+        """ Test sign up with same email """
+
+        self.client.post('/api/v2/auth/signup', json=self.user)
+
+        self.user.update({
+            'firstname': 'John',
+            'lastname': 'Doe',
+            'username': 'jd'
+        })
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Email already exists')
