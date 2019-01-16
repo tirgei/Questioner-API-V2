@@ -31,9 +31,9 @@ class Register(Resource):
                     status_code = 409
                     message = 'Email already exists'
 
-                elif self.db.exists('email', data['email']):
+                elif self.db.exists('username', data['username']):
                     status_code = 409
-                    message = 'Email already exists'
+                    message = 'Username already exists'
 
                 else:
                     self.db.save(data)
