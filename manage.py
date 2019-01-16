@@ -1,5 +1,4 @@
 import argparse
-import os
 from db.db_config import connect_db
 from db.db_tables import create_tables, drop_tables, truncate, seed_db
 
