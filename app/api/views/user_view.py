@@ -3,6 +3,7 @@ from flask_restful import Resource
 from ..models.user_model import UserModel
 from ..schemas.user_schema import UserSchema
 from marshmallow import ValidationError
+from flask_jwt_extended import (create_access_token, create_refresh_token)
 
 
 class Register(Resource):
@@ -36,9 +37,18 @@ class Register(Resource):
                     message = 'Username already exists'
 
                 else:
-                    self.db.save(data)
+                    user = self.db.save(data)
+                    result = UserSchema(exclude=['password']).dump(user)
+                    access_token = create_access_token(identity=user['id'])
+                    refresh_token = create_refresh_token(identity=user['id'])
+
                     status_code = 201
                     message = 'User created successfully'
+                    response.update({
+                        'data': result,
+                        'access_token': access_token,
+                        'refresh_token': refresh_token
+                    })
 
             except ValidationError as error:
                 status_code = 400
