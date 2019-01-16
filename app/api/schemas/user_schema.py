@@ -11,6 +11,7 @@ class UserSchema(Schema):
     username = fields.Str(required=True, validate=(required))
     othername = fields.Str(required=False)
     phonenumber = fields.Str(required=False)
-    email = fields.Email(required=True)
+    email = fields.Email(required=True, validate=(email))
+    othername = fields.Str(required=False)
     password = fields.Str(required=True, validate=(required, password))
     registered = fields.DateTime(dump_only=True)
