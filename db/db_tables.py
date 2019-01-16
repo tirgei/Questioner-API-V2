@@ -99,16 +99,3 @@ def create_tables(connection):
         cur.execute(query)
 
     connection.commit()
-
-
-def seed_db(connection):
-    """ Function to add super user to db """
-
-    cur = connection.cursor()
-    password = generate_password_hash('asf#242KL8')
-
-    cur.execute("INSERT INTO users (firstname, lastname, username, \
-    email, password, admin) VALUES ('Vincent', 'Tirgei', 'tirgei', \
-    'tirgeic@gmail.com', {}, True)".format(password))
-
-    connection.commit()
