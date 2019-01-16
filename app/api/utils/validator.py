@@ -9,8 +9,6 @@ def required(value):
         if not value.strip(' '):
             raise ValidationError('This parameter cannot be null')
         return value
-    elif value:
-        return value
 
 
 def email(email):
