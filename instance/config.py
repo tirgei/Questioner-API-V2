@@ -10,6 +10,8 @@ class Config(object):
     DATABASE_PORT = os.getenv('DATABASE_PORT')
     DATABASE_USERNAME = os.getenv('DATABASE_USERNAME')
     DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+    SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 class DevelopmentConfig(Config):
