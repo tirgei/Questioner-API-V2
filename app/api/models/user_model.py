@@ -1,8 +1,8 @@
-from ..utils.database_model import DatabaseModel
+from ..utils.base_model import Model
 from werkzeug.security import generate_password_hash
 
 
-class UserModel(DatabaseModel):
+class UserModel(Model):
     """ Model class for User object """
 
     table = 'users'
@@ -24,9 +24,9 @@ class UserModel(DatabaseModel):
     def exists(self, key, value):
         """ Function to check if user exists """
 
-        query = "SELECT COUNT (*) FROM {} WHERE {} = '{}'".format(
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
         self.cur.execute(query)
-        result = self.cur.fetchone()
+        result = self.cur.fetchall()
 
-        return result[0]
+        return len(result) > 0
