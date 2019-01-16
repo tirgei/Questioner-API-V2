@@ -65,6 +65,12 @@ foo@bar:~$ mv .env.example .env
 foo@bar:~$ source .env
 ```
 
+- Create database tables
+
+```console
+foo@bar:~$ python manage.py -a
+```
+
 - Run the tests
 
 ```console
