@@ -16,7 +16,7 @@ class TestUser(BaseTest):
             'phonenumber': '0726002063'
         }
 
-    def teatDown(self):
+    def tearDown(self):
         super().tearDown()
 
     def test_sign_up_no_data(self):
@@ -57,6 +57,18 @@ class TestUser(BaseTest):
         """ Test sign up with an invalid password """
 
         self.user.update({'password': 'fdsgfgfj'})
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'], 'Invalid data provided')
+
+    def test_sign_up_invalid_email(self):
+        """ Test sign up with an invalid email """
+
+        self.user.update({'email': 'jggmail.com'})
 
         res = self.client.post('/api/v2/auth/signup', json=self.user)
         data = res.get_json()
