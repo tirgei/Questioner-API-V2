@@ -99,3 +99,11 @@ def create_tables(connection):
         cur.execute(query)
 
     connection.commit()
+
+
+def seed(connection):
+    cur = connection.cursor()
+    cur.execute("INSERT INTO users (firstname, lastname, username, email, password, admin)\
+        VALUES ('Vincent', 'Tirgei', 'tirgei', 'admin@app.com', '{}', True)\
+        ".format(generate_password_hash('asf8$#Er0')))
+    connection.commit()

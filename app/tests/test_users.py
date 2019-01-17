@@ -217,3 +217,34 @@ class TestUser(BaseTest):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['status'], 422)
         self.assertEqual(data['message'], 'Incorrect password')
+
+    def test_refresh_access_token_no_headers(self):
+        """ Test refresh access token with no headers provided """
+
+        res = self.client.post('/api/v2/refresh-token')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['msg'], 'Missing Authorization Header')
+
+    def test_refresh_access_token_passing_access_token(self):
+        """ Test refresh access token passing access token """
+
+        res = self.client.post('/api/v2/refresh-token', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['msg'], 'Only refresh tokens are allowed')
+
+    def test_refresh_access_token(self):
+        """ Test refresh access token successfully"""
+
+        self.headers.update({'Authorization': 'Bearer {}'.format(
+            self.refresh_token)})
+
+        res = self.client.post('/api/v2/refresh-token', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Token refreshed successfully')
