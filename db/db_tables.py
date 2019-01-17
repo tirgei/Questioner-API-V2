@@ -4,7 +4,8 @@ tables = [
     'users',
     'meetups',
     'questions',
-    'comments'
+    'comments',
+    'rsvps'
 ]
 
 create_table_queries = [
@@ -67,6 +68,19 @@ create_table_queries = [
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         FOREIGN KEY (question_id) REFERENCES questions(id),
         FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS rsvps (
+        meetup_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        response VARCHAR(10),
+        created_at TIMESTAMP WITHOUT TIME ZONE \
+        DEFAULT (NOW() AT TIME ZONE 'utc'),
+        modified_at TIMESTAMP WITHOUT TIME ZONE \
+        DEFAULT (NOW() AT TIME ZONE 'utc'),
+        PRIMARY KEY (meetup_id, user_id)
     )
     """
 ]
