@@ -7,6 +7,9 @@ class UserModel(Model):
 
     table = 'users'
 
+    def find(self, id):
+        pass
+
     def save(self, data):
         """ Function to save new user """
 
