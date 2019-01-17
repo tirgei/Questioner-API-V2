@@ -1,5 +1,6 @@
 import re
 from marshmallow import ValidationError
+from datetime import datetime
 
 
 def required(value):
@@ -42,3 +43,17 @@ def password(password):
 
     if sum(scores.values()) < 3:
         raise ValidationError(message)
+
+
+def date(date):
+    """ Function to validate meetup date """
+
+    if not re.match(r"^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/([12][0-9]{3})$", date):
+        raise ValidationError('Date should be in the format dd/mm/yyyy')
+
+    date_format = "%d/%m/%Y"
+    date = datetime.strptime(date, date_format)
+    now = datetime.now()
+
+    if date < now:
+        raise ValidationError('Date should be in the future')
