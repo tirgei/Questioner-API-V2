@@ -14,7 +14,7 @@ class Model(ABC, DatabaseModel):
 
     @abstractmethod
     def find(self, id):
-        pass   
+        pass
 
     @abstractmethod
     def save(self, data):
@@ -26,4 +26,8 @@ class Model(ABC, DatabaseModel):
 
     @abstractmethod
     def where(self, key, value):
+        pass
+
+    @abstractmethod
+    def delete(self, id):
         pass
