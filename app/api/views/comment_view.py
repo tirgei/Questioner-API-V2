@@ -54,3 +54,23 @@ class Comment(Resource):
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
+
+    def get(self, question_id):
+        """ Endpoint to fetch all comments for a question """
+
+        status_code = 200
+        response = {}
+
+        if not self.question_db.exists('id', question_id):
+            status_code = 404
+            response.update({'message': 'Question not found'})
+
+        else:
+            comments = self.db.all(question_id)
+            result = CommentSchema(many=True).dump(comments)
+
+            status_code = 200
+            response.update({'data': result})
+
+        response.update({'status': status_code})
+        return response, status_code

@@ -81,3 +81,38 @@ class TestComment(BaseTest):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Comment posted successfully')
+
+    def test_fetch_all_comments_question_not_posted(self):
+        """ Test fetch all comments for question that doesn't exist """
+
+        res = self.client.get('/api/v2/questions/5/comments')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Question not found')
+
+    def test_fetch_all_comments(self):
+        """ Test fetch all comments for a question """
+        
+        self.client.post('/api/v2/questions/1/comments', json=self.comment,
+                         headers=self.headers)
+        self.client.post('/api/v2/questions/1/comments', json=self.comment2,
+                         headers=self.headers)
+
+        res = self.client.get('/api/v2/questions/1/comments')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 2)
+
+    def test_fetch_all_comments_empty(self):
+        """ Test fetch all comments for a question with none posted """
+        
+        res = self.client.get('/api/v2/questions/1/comments')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 0)
