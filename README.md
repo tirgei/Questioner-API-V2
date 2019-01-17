@@ -79,7 +79,7 @@ foo@bar:~$ flask run
 
 ## API Endpoints
 
-#### User Endpoints
+### User Endpoints
 
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
@@ -87,13 +87,20 @@ foo@bar:~$ flask run
 | **POST** | `/api/v2/auth/login` | Login a user |
 | **POST** | `/api/v2/refresh-token` | Refresh access token |
 
-#### Meetup Endpoints
+### Meetup Endpoints
 
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
 | **POST** | `/api/v2/meetups` | Create a new meetup |
 | **GET** | `/api/v2/meetups` | Fetch all meetups |
 | **GET** | `/api/v2/meetups/<int:meetup_id>` | Fetch specific meetup |
+| **DELETE** | `/api/v2/meetups/<int:meetup_id>` | Delete specific meetup |
+
+### Questions Endpoints
+
+| **HTTP METHOD** | **URI** | **ACTION** |
+| --- | --- | --- |
+| **POST** | `/api/v2/questions` | Post a question to a specific meetup |
 
 ## Author
 
