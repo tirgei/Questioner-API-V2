@@ -183,3 +183,44 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['status'], 404)
         self.assertEqual(data['message'], 'Meetup not found')
+
+    def test_delete_meetup_not_created(self):
+        """ Test delete meetup that hasn't been created """
+
+        res = self.client.delete('api/v2/meetups/4',
+                                 headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Meetup not found')
+
+    def test_delete_meetup(self):
+        """ Test delete meetup successfully """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.delete('api/v2/meetups/1', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Meetup deleted successfully')
+
+    def test_delete_meetup_not_admin(self):
+        """ Test delete meetup successfully """
+
+        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        token = resp.get_json()['access_token']
+        self.headers.update({'Authorization': 'Bearer {}'.format(token)})
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.delete('api/v2/meetups/1', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['status'], 401)
+        self.assertEqual(data['message'], 'Not authorized')
