@@ -11,10 +11,11 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 class Register(Resource):
     """ Resource for user registration """
 
+    def __init__(self):
+        self.db = UserModel()
+
     def post(self):
         """ Endpoint for user signup """
-
-        db = UserModel()
 
         status_code = 200
         message = ''
@@ -30,16 +31,16 @@ class Register(Resource):
             try:
                 data = UserSchema().load(signup_data)
 
-                if db.exists('email', data['email']):
+                if self.db.exists('email', data['email']):
                     status_code = 409
                     message = 'Email already exists'
 
-                elif db.exists('username', data['username']):
+                elif self.db.exists('username', data['username']):
                     status_code = 409
                     message = 'Username already exists'
 
                 else:
-                    user = db.save(data)
+                    user = self.db.save(data)
                     result = UserSchema(exclude=['password']).dump(user)
                     access_token = create_access_token(identity=user['id'])
                     refresh_token = create_refresh_token(identity=user['id'])
@@ -65,10 +66,11 @@ class Register(Resource):
 class Login(Resource):
     """ Resource for user login """
 
+    def __init__(self):
+        self.db = UserModel()
+
     def post(self):
         """ Endpoint for user login """
-
-        db = UserModel()
 
         message = ''
         status_code = 200
@@ -86,20 +88,16 @@ class Login(Resource):
 
                 try:
                     username = data['username']
-                    password = data['password']
+                    pw = data['password']
 
-                    print('chechcked pass')
-
-                    if not db.exists('username', username):
-                        print('not found')
+                    if not self.db.exists('username', username):
                         status_code = 404
                         message = 'User not found'
 
                     else:
-                        print('nice')
-                        user = db.where('username', username)
+                        user = self.db.where('username', username)
 
-                        if not db.checkpassword(user['password'], password):
+                        if not self.db.checkpassword(user['password'], pw):
                             status_code = 422
                             message = 'Incorrect password'
 
