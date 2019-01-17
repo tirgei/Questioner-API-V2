@@ -6,6 +6,12 @@ class MeetupModel(Model):
 
     table = 'meetups'
 
+    def find(self, id):
+        """ Function to fetch specific meetup by id """
+
+        meetup = self.where('id', id)
+        return meetup
+
     def save(self, data):
         """ Function to save new user """
 
@@ -23,7 +29,7 @@ class MeetupModel(Model):
 
     def all(self):
         """ Function to fetch all users """
-        
+
         query = "SELECT * FROM {}".format(self.table)
 
         self.cur.execute(query)
@@ -31,7 +37,16 @@ class MeetupModel(Model):
         return result
 
     def exists(self, key, value):
-        pass
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+        self.cur.execute(query)
 
-    def where(self, key, where):
-        pass
+        result = self.cur.fetchall()
+        return len(result) > 0
+
+    def where(self, key, value):
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+        return result

@@ -13,6 +13,10 @@ class Model(ABC, DatabaseModel):
         pass
 
     @abstractmethod
+    def find(self, id):
+        pass   
+
+    @abstractmethod
     def save(self, data):
         pass
 
