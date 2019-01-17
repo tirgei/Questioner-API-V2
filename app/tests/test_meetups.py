@@ -112,3 +112,18 @@ class TestMeetup(BaseTest):
         self.assertEqual(data['status'], 400)
         self.assertEqual(data['message'], 'Invalid data provided')
 
+    def test_create_meetup_not_admin(self):
+        """ Test create meetup when not admin """
+
+        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        token = resp.get_json()['access_token']
+        self.headers.update({'Authorization': 'Bearer {}'.format(token)})
+
+        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['status'], 401)
+        self.assertEqual(data['message'], 'Not authorized')
+
