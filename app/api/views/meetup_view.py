@@ -1,6 +1,8 @@
 from flask import request
 from ..schemas.meetup_schema import MeetupSchema
+from ..schemas.rsvp_schema import RsvpSchema
 from ..models.meetup_model import MeetupModel
+from ..models.rsvp_model import RsvpModel
 from ..models.user_model import UserModel
 from marshmallow import ValidationError
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
@@ -116,5 +118,53 @@ class Meetup(Resource):
                 status_code = 200
                 message = 'Meetup deleted successfully'
 
+        response.update({'status': status_code, 'message': message})
+        return response, status_code
+
+
+class MeetupRsvp(Resource):
+    """ Resource for meetup rsvp """
+
+    def __init__(self):
+        self.db = RsvpModel()
+        self.meetup_db = MeetupModel()
+
+    @jwt_required
+    def post(self, meetup_id, rsvp):
+        """ Endpoint to RSVP to meetup """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        valid_responses = ('yes', 'no', 'maybe')
+
+        current_user = get_jwt_identity()
+
+        if not self.meetup_db.exists('id', meetup_id):
+            status_code = 404
+            message = 'Meetup not found'
+
+        elif rsvp not in valid_responses:
+            status_code = 400
+            message = 'Invalid rsvp'
+
+        elif self.db.exists(meetup_id, current_user):
+            status_code = 400
+            message = 'Meetup already responded'
+
+        else:
+            rsvp_data = {
+                'meetup_id': meetup_id,
+                'user_id': current_user,
+                'response': rsvp
+            }
+
+            res = self.db.save(rsvp_data)
+            status_code = 200
+            message = 'Meetup rsvp successfully'
+            result = RsvpSchema().dump(res)
+            response.update({'data': result})
+ 
         response.update({'status': status_code, 'message': message})
         return response, status_code
