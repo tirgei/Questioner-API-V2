@@ -42,6 +42,10 @@ class UserModel(Model):
         result = self.cur.fetchone()
         return result
 
+    def is_admin(self, user_id):
+        user = self.where('id', user_id)
+        return user['admin']
+
     @staticmethod
     def checkpassword(hashed_password, password):
         """ Function to check if passwords match """
