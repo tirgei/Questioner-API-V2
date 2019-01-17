@@ -20,7 +20,7 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '08/01/2019'
+            'happening_on': '30/01/2019'
         }
 
     def tearDown(self):
@@ -85,4 +85,30 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Meetup created successfully')
+
+    def test_create_meetup_invalid_date(self):
+        """ Test create meetup with an invalid """
+
+        self.meetup.update({'happening_on': '02/08/19'})
+
+        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'], 'Invalid data provided')
+
+    def test_create_meetup_past_date(self):
+        """ Test create meetup with a past date """
+
+        self.meetup.update({'happening_on': '02/08/2018'})
+
+        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'], 'Invalid data provided')
 
