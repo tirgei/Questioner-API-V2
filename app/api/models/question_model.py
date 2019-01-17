@@ -6,8 +6,15 @@ class QuestionModel(Model):
 
     table = 'questions'
 
-    def all(self):
-        pass
+    def all(self, id):
+        """ Function to fetch all questions for a meetup """
+
+        query = "SELECT * FROM {} where meetup_id = {}".format(
+            self.table, id)
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
 
     def find(self, id):
         pass
