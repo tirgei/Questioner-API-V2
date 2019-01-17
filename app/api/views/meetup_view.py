@@ -54,3 +54,10 @@ class Meetups(Resource):
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
+
+    def get(self):
+        """ Endpoint to fetch all meetups """
+
+        meetups = self.db.all()
+        result = MeetupSchema(many=True).dump(meetups)
+        return {'status': 200, 'data': result}, 200
