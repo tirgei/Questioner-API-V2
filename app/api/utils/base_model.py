@@ -15,3 +15,7 @@ class Model(ABC, DatabaseModel):
     @abstractmethod
     def exists(self, key, value):
         pass
+
+    @abstractmethod
+    def where(self, key, value):
+        pass
