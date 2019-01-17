@@ -9,6 +9,10 @@ class Model(ABC, DatabaseModel):
         super().__init__()
 
     @abstractmethod
+    def all(self):
+        pass
+
+    @abstractmethod
     def save(self, data):
         pass
 

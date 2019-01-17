@@ -42,6 +42,9 @@ class UserModel(Model):
         result = self.cur.fetchone()
         return result
 
+    def all(self):
+        pass
+
     def is_admin(self, user_id):
         user = self.where('id', user_id)
         return user['admin']
