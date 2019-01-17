@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from ..utils.validator import required
+from ..utils.validator import required, date
 
 
 class MeetupSchema(Schema):
@@ -9,6 +9,6 @@ class MeetupSchema(Schema):
     topic = fields.Str(required=True, validate=(required))
     description = fields.Str(required=True, validate=(required))
     location = fields.Str(required=True, validate=(required))
-    happening_on = fields.Str(required=True, validate=(required))
+    happening_on = fields.Str(required=True, validate=(required, date))
     tags = fields.List(fields.Str(), required=False)
     images = fields.List(fields.Str(), required=False)
