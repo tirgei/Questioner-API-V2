@@ -108,6 +108,7 @@ foo@bar:~$ flask run
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
 | **POST** | `/api/v2/questions/<int:question_id>/comments` | Post a comment to a question |
+| **GET** | `/api/v2/questions/<int:question_id>/comments` | Fetch all comments for a question |
 
 ## Author
 
