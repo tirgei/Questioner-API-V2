@@ -30,8 +30,7 @@ create_table_queries = [
         topic VARCHAR(250) NOT NULL,
         description VARCHAR(250) NOT NULL,
         location VARCHAR(250) NOT NULL,
-        happening_on TIMESTAMP WITHOUT TIME ZONE \
-        DEFAULT (NOW() AT TIME ZONE 'utc'),
+        happening_on VARCHAR(250) NOT NULL,
         created_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
