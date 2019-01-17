@@ -3,7 +3,9 @@ from flask_restful import Resource
 from ..models.user_model import UserModel
 from ..schemas.user_schema import UserSchema
 from marshmallow import ValidationError
-from flask_jwt_extended import (create_access_token, create_refresh_token)
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                jwt_required, get_jwt_identity,
+                                jwt_refresh_token_required)
 
 
 class Register(Resource):
@@ -102,8 +104,10 @@ class Login(Resource):
                             message = 'Incorrect password'
 
                         else:
-                            access_token = create_access_token(identity=user['id'])
-                            refresh_token = create_refresh_token(identity=True)
+                            access_token = create_access_token(
+                                identity=user['id'])
+                            refresh_token = create_refresh_token(
+                                identity=True)
 
                             status_code = 200
                             message = 'User logged in successfully'
@@ -126,3 +130,16 @@ class Login(Resource):
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
+
+
+class RefreshToken(Resource):
+    """ Resource to refresh access token """
+
+    @jwt_refresh_token_required
+    def post(self):
+        """ Endpoint to refresh user access token """
+
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user)
+        return {'status': 200, 'message': 'Token refreshed successfully',
+                'access_token': access_token}
