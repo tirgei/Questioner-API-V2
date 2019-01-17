@@ -150,7 +150,7 @@ class MeetupRsvp(Resource):
             message = 'Invalid rsvp'
 
         elif self.db.exists(meetup_id, current_user):
-            status_code = 400
+            status_code = 403
             message = 'Meetup already responded'
 
         else:
@@ -165,6 +165,6 @@ class MeetupRsvp(Resource):
             message = 'Meetup rsvp successfully'
             result = RsvpSchema().dump(res)
             response.update({'data': result})
- 
+
         response.update({'status': status_code, 'message': message})
         return response, status_code
