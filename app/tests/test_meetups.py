@@ -23,6 +23,13 @@ class TestMeetup(BaseTest):
             'happening_on': '30/01/2019'
         }
 
+        self.meetup2 = {
+            'topic': 'Android',
+            'description': 'Getting started with Kotlin',
+            'location': 'Andela HQ, Nairobi',
+            'happening_on': '30/01/2019'
+        }
+
     def tearDown(self):
         super().tearDown()
 
@@ -78,7 +85,7 @@ class TestMeetup(BaseTest):
     def test_create_meetup(self):
         """ Test create meetup successfully """
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -91,7 +98,7 @@ class TestMeetup(BaseTest):
 
         self.meetup.update({'happening_on': '02/08/19'})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -104,7 +111,7 @@ class TestMeetup(BaseTest):
 
         self.meetup.update({'happening_on': '02/08/2018'})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -119,7 +126,7 @@ class TestMeetup(BaseTest):
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -127,3 +134,27 @@ class TestMeetup(BaseTest):
         self.assertEqual(data['status'], 401)
         self.assertEqual(data['message'], 'Not authorized')
 
+    def test_fetch_all_meetups_empty(self):
+        """ Test fetch all meetups with none created yet """
+
+        res = self.client.get('/api/v2/meetups')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 0)
+
+    def test_fetch_all_meetups(self):
+        """ Test fetch all meetups """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+        self.client.post('/api/v2/meetups', json=self.meetup2,
+                         headers=self.headers)
+
+        res = self.client.get('/api/v2/meetups')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 2)

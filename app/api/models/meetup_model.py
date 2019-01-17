@@ -21,8 +21,17 @@ class MeetupModel(Model):
         self.conn.commit()
         return result
 
+    def all(self):
+        """ Function to fetch all users """
+        
+        query = "SELECT * FROM {}".format(self.table)
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
+
     def exists(self, key, value):
         pass
-    
+
     def where(self, key, where):
         pass

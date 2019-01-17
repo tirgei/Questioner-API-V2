@@ -27,7 +27,7 @@ class Meetups(Resource):
         if not self.user_db.is_admin(current_user):
             message = 'Not authorized'
             status_code = 401
-   
+
         else:
             meetup_data = request.get_json()
 
@@ -54,3 +54,10 @@ class Meetups(Resource):
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
+
+    def get(self):
+        """ Endpoint to fetch all meetups """
+
+        meetups = self.db.all()
+        result = MeetupSchema(many=True).dump(meetups)
+        return {'status': 200, 'data': result}, 200
