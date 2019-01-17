@@ -27,7 +27,7 @@ class Meetups(Resource):
         if not self.user_db.is_admin(current_user):
             message = 'Not authorized'
             status_code = 401
-   
+
         else:
             meetup_data = request.get_json()
 

@@ -78,7 +78,7 @@ class TestMeetup(BaseTest):
     def test_create_meetup(self):
         """ Test create meetup successfully """
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -91,7 +91,7 @@ class TestMeetup(BaseTest):
 
         self.meetup.update({'happening_on': '02/08/19'})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -104,7 +104,7 @@ class TestMeetup(BaseTest):
 
         self.meetup.update({'happening_on': '02/08/2018'})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
@@ -119,11 +119,10 @@ class TestMeetup(BaseTest):
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 
-        res = self.client.post('/api/v2/meetups', json=self.meetup, 
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
                                headers=self.headers)
         data = res.get_json()
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['status'], 401)
         self.assertEqual(data['message'], 'Not authorized')
-
