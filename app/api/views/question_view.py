@@ -1,4 +1,4 @@
-from flask import jsonify, request, make_response
+from flask import request
 from ..schemas.question_schema import QuestionSchema
 from ..models.question_model import QuestionModel
 from ..models.meetup_model import MeetupModel
