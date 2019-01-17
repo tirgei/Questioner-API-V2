@@ -44,8 +44,38 @@ class QuestionModel(Model):
         result = self.cur.fetchall()
         return len(result) > 0
 
+    def upvote(self, question_id):
+        """ Function to upvote question """
+
+        question = self.where('id', question_id)
+        votes = question['votes'] + 1
+
+        query = "UPDATE {} SET votes = '{}' WHERE id = '{}' \
+        RETURNING *".format(self.table, votes, question_id)
+
+        self.cur.execute(query)
+        self.conn.commit()
+        return self.cur.fetchone()
+
+    def downvote(self, question_id):
+        """ Function to downvote question """
+
+        question = self.where('id', question_id)
+        votes = question['votes'] - 1
+
+        query = "UPDATE {} SET votes = '{}' WHERE id = '{}' \
+        RETURNING *".format(self.table, votes, question_id)
+
+        self.cur.execute(query)
+        self.conn.commit()
+        return self.cur.fetchone()
+
     def where(self, key, value):
-        pass
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+        return result
 
     def delete(self, id):
         pass
