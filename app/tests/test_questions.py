@@ -139,3 +139,121 @@ class TestQuestion(BaseTest):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['status'], 200)
         self.assertEqual(len(data['data']), 2)
+
+    def test_upvote_question_not_posted(self):
+        """ Test upvote for question that hasn't been posted """
+
+        res = self.client.patch('/api/v2/questions/3/upvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Question not found')
+
+    def test_upvote_question(self):
+        """ Test upvote question successfully """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/upvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Question upvoted successfully')
+        self.assertEqual(data['data']['votes'], 1)
+
+    def test_upvote_question_already_upvoted(self):
+        """ Test upvote question that's already upvoted """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        self.client.patch('/api/v2/questions/1/upvote', headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/upvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
+        self.assertEqual(data['message'], 'Question already upvoted')
+
+    def test_upvote_question_already_downvoted(self):
+        """ Test upvote question that's already downvoted """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        self.client.patch('/api/v2/questions/1/downvote', headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/upvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Question upvoted successfully')
+        self.assertEqual(data['data']['votes'], 0)
+
+    def test_downvote_question_not_posted(self):
+        """ Test downvote for question that hasn't been posted """
+
+        res = self.client.patch('/api/v2/questions/3/downvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Question not found')
+
+    def test_downvote_question(self):
+        """ Test downvote question successfully """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/downvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Question downvoted successfully')
+        self.assertEqual(data['data']['votes'], -1)
+
+    def test_downvote_question_already_downvoted(self):
+        """ Test downvote question that's already downvoted """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        self.client.patch('/api/v2/questions/1/downvote', headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/downvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
+        self.assertEqual(data['message'], 'Question already downvoted')
+
+    def test_downvote_question_already_upvoted(self):
+        """ Test downvote question that's already upvoted """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        self.client.patch('/api/v2/questions/1/upvote', headers=self.headers)
+
+        res = self.client.patch('/api/v2/questions/1/downvote',
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Question downvoted successfully')
+        self.assertEqual(data['data']['votes'], 0)
