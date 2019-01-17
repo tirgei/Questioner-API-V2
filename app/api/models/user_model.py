@@ -45,6 +45,9 @@ class UserModel(Model):
         result = self.cur.fetchone()
         return result
 
+    def delete(self, id):
+        pass
+
     def all(self):
         pass
 

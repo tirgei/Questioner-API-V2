@@ -50,3 +50,11 @@ class MeetupModel(Model):
         self.cur.execute(query)
         result = self.cur.fetchone()
         return result
+
+    def delete(self, id):
+        """ Function to delete meetup """
+
+        query = "DELETE FROM {} WHERE id = {}".format(self.table, id)
+        self.cur.execute(query)
+        self.conn.commit()
+        return True

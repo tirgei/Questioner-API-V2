@@ -69,6 +69,7 @@ class Meetup(Resource):
 
     def __init__(self):
         self.db = MeetupModel()
+        self.user_db = UserModel()
 
     def get(self, meetup_id):
         """ Endpoint to fetch specific meetup """
@@ -88,4 +89,32 @@ class Meetup(Resource):
             response.update({'data': result})
 
         response.update({'status': status_code})
+        return response, status_code
+
+    @jwt_required
+    def delete(self, meetup_id):
+        """ Endpoint to delete meetup """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        current_user = get_jwt_identity()
+
+        if not self.user_db.is_admin(current_user):
+            message = 'Not authorized'
+            status_code = 401
+
+        else:
+            if not self.db.exists('id', meetup_id):
+                status_code = 404
+                message = 'Meetup not found'
+
+            else:
+                self.db.delete(meetup_id)
+
+                status_code = 200
+                message = 'Meetup deleted successfully'
+
+        response.update({'status': status_code, 'message': message})
         return response, status_code
