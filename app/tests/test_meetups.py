@@ -2,7 +2,7 @@ from .base_test import BaseTest
 
 
 class TestMeetup(BaseTest):
-    """ Test class for user endpoints """
+    """ Test class for meetup endpoints """
 
     def setUp(self):
         super().setUp()
