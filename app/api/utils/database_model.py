@@ -1,5 +1,6 @@
 from flask import g
 from db.db_config import connect_db
+from psycopg2.extras import RealDictCursor
 
 
 class DatabaseModel():
@@ -7,7 +8,7 @@ class DatabaseModel():
 
     def __init__(self):
         self.conn = self.get_db_connection()
-        self.cur = self.conn.cursor()
+        self.cur = self.conn.cursor(cursor_factory=RealDictCursor)
 
     @staticmethod
     def get_db_connection():
