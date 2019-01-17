@@ -44,6 +44,7 @@ class Meetups(Resource):
 
                     status_code = 201
                     message = 'Meetup created successfully'
+                    response.update({'data': result})
 
                 except ValidationError as err:
                     errors = err.messages
@@ -61,3 +62,30 @@ class Meetups(Resource):
         meetups = self.db.all()
         result = MeetupSchema(many=True).dump(meetups)
         return {'status': 200, 'data': result}, 200
+
+
+class Meetup(Resource):
+    """ Resource for single meetup """
+
+    def __init__(self):
+        self.db = MeetupModel()
+
+    def get(self, meetup_id):
+        """ Endpoint to fetch specific meetup """
+
+        status_code = 200
+        response = {}
+
+        if not self.db.exists('id', meetup_id):
+            status_code = 404
+            response.update({'message': 'Meetup not found'})
+
+        else:
+            meetup = self.db.find(meetup_id)
+            result = MeetupSchema().dump(meetup)
+
+            status_code = 200
+            response.update({'data': result})
+
+        response.update({'status': status_code})
+        return response, status_code
