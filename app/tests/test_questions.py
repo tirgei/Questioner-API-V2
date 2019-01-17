@@ -1,8 +1,8 @@
 from .base_test import BaseTest
 
 
-class TestMeetup(BaseTest):
-    """ Test class for user endpoints """
+class TestQuestion(BaseTest):
+    """ Test class for question endpoints """
 
     def setUp(self):
         super().setUp()
