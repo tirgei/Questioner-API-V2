@@ -79,7 +79,7 @@ foo@bar:~$ flask run
 
 ## API Endpoints
 
-### User Endpoints
+#### User Endpoints
 
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ foo@bar:~$ flask run
 | **POST** | `/api/v2/auth/login` | Login a user |
 | **POST** | `/api/v2/refresh-token` | Refresh access token |
 
-### Meetup
+#### Meetup Endpoints
 
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
