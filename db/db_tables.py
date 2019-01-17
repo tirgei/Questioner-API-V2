@@ -5,7 +5,8 @@ tables = [
     'meetups',
     'questions',
     'comments',
-    'rsvps'
+    'rsvps',
+    'votes'
 ]
 
 create_table_queries = [
@@ -81,6 +82,15 @@ create_table_queries = [
         modified_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         PRIMARY KEY (meetup_id, user_id)
+    )
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS votes (
+        question_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        vote VARCHAR(10),
+        PRIMARY KEY (question_id, user_id)
     )
     """
 ]

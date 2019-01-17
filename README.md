@@ -94,7 +94,7 @@ foo@bar:~$ flask run
 | **POST** | `/api/v2/meetups` | Create a new meetup |
 | **GET** | `/api/v2/meetups` | Fetch all meetups |
 | **GET** | `/api/v2/meetups/<int:meetup_id>` | Fetch specific meetup |
-| **POST** | `/api/v2/<int:meetup_id>/<string:rsvp>` | RSVP to a meetup |
+| **POST** | `/api/v2/meetups/<int:meetup_id>/<string:rsvp>` | RSVP to a meetup |
 | **DELETE** | `/api/v2/meetups/<int:meetup_id>` | Delete specific meetup |
 
 #### Question Endpoints
@@ -102,7 +102,9 @@ foo@bar:~$ flask run
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
 | **POST** | `/api/v2/questions` | Post a question to a specific meetup |
-| **GET** | `/api/v2/meetups/<int:meetup_id>/question` | Fetch all questions for a meetup |
+| **GET** | `/api/v2/meetups/<int:meetup_id>/questions` | Fetch all questions for a meetup |
+| **PATCH** | `/api/v2/questions/<int:question_id>/upvote` | Upvote a question |
+| **PATCH** | `/api/v2/questions/<int:question_id>/downvote` | Downvote a question |
 
 #### Comment Endpoints
 

@@ -1,6 +1,7 @@
 from flask import request
 from ..schemas.question_schema import QuestionSchema
 from ..models.question_model import QuestionModel
+from ..models.vote_model import VoteModel
 from ..models.meetup_model import MeetupModel
 from marshmallow import ValidationError
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
@@ -79,4 +80,128 @@ class QuestionList(Resource):
             response.update({'data': result})
 
         response.update({'status': status_code})
+        return response, status_code
+
+
+class QuestionUpvote(Resource):
+    """ Resource for upvoting question """
+
+    def __init__(self):
+        self.db = QuestionModel()
+        self.vote_model = VoteModel()
+
+    @jwt_required
+    def patch(self, question_id):
+        """ Endpoint to upvote question """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        current_user = get_jwt_identity()
+
+        if not self.db.exists('id', question_id):
+            message = 'Question not found'
+            status_code = 404
+
+        else:
+            voted = self.vote_model.voted(question_id, current_user)
+
+            print('### HAS VOTED: {} ###'.format(bool(voted)))
+
+            if voted:
+                if voted['vote'] == 'upvote':
+                    status_code = 403
+                    message = 'Question already upvoted'
+
+                else:
+                    question = self.db.upvote(question_id)
+                    result = QuestionSchema().dump(question)
+
+                    message = 'Question upvoted successfully'
+                    status_code = 200
+                    response.update({'data': result})
+
+                    self.vote_model.update({
+                        'user_id': current_user,
+                        'question_id': question_id,
+                        'vote': 'upvote'
+                    })
+
+            else:
+                question = self.db.upvote(question_id)
+                result = QuestionSchema().dump(question)
+
+                message = 'Question upvoted successfully'
+                status_code = 200
+                response.update({'data': result})
+
+                self.vote_model.add({
+                    'user_id': current_user,
+                    'question_id': question_id,
+                    'vote': 'upvote'
+                })
+
+        response.update({'status': status_code, 'message': message})
+        return response, status_code
+
+
+class QuestionDownvote(Resource):
+    """ Resource for downvoting question """
+
+    def __init__(self):
+        self.db = QuestionModel()
+        self.vote_model = VoteModel()
+
+    @jwt_required
+    def patch(self, question_id):
+        """ Endpoint to downvote question """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        current_user = get_jwt_identity()
+
+        if not self.db.exists('id', question_id):
+            message = 'Question not found'
+            status_code = 404
+
+        else:
+            voted = self.vote_model.voted(question_id, current_user)
+
+            if voted:
+                if voted['vote'] == 'downvote':
+                    status_code = 403
+                    message = 'Question already downvoted'
+
+                else:
+                    question = self.db.downvote(question_id)
+                    result = QuestionSchema().dump(question)
+
+                    message = 'Question downvoted successfully'
+                    status_code = 200
+                    response.update({'data': result})
+
+                    self.vote_model.update({
+                        'user_id': current_user,
+                        'question_id': question_id,
+                        'vote': 'downvote'
+                    })
+
+            else:
+                question = self.db.downvote(question_id)
+                result = QuestionSchema().dump(question)
+
+                message = 'Question downvoted successfully'
+                status_code = 200
+                response.update({'data': result})
+
+                self.vote_model.add({
+                    'user_id': current_user,
+                    'question_id': question_id,
+                    'vote': 'downvote'
+                })
+
+        response.update({'status': status_code, 'message': message})
         return response, status_code
