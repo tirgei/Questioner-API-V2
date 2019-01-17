@@ -11,5 +11,5 @@ class QuestionSchema(Schema):
     meetup_id = fields.Int(required=True)
     user_id = fields.Int(dump_only=True)
     votes = fields.Int(dump_only=True)
-    created_on = fields.DateTime(dump_only=True)
-    modified_on = fields.DateTime(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)

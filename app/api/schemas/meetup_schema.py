@@ -12,3 +12,5 @@ class MeetupSchema(Schema):
     happening_on = fields.Str(required=True, validate=(required, date))
     tags = fields.List(fields.Str(), required=False)
     images = fields.List(fields.Str(), required=False)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
