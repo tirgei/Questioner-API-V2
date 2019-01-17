@@ -41,7 +41,7 @@ create_table_queries = [
     """
     CREATE TABLE IF NOT EXISTS questions (
         id SERIAL PRIMARY KEY NOT NULL,
-        topic VARCHAR(250) NULL,
+        title VARCHAR(250) NULL,
         body VARCHAR(250) NOT NULL,
         votes INTEGER NOT NULL DEFAULT 0,
         meetup_id INTEGER NOT NULL,
