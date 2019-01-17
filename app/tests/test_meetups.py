@@ -301,6 +301,6 @@ class TestMeetup(BaseTest):
         res = self.client.post('api/v2/meetups/1/maybe', headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
         self.assertEqual(data['message'], 'Meetup already responded')
