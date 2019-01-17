@@ -35,7 +35,14 @@ class QuestionModel(Model):
         return result
 
     def exists(self, key, value):
-        pass
+        """ Function to check if comment exists """
+
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+        self.cur.execute(query)
+
+        result = self.cur.fetchall()
+        return len(result) > 0
 
     def where(self, key, value):
         pass
