@@ -3,7 +3,7 @@ from ..utils.validator import required, email, password
 
 
 class UserSchema(Schema):
-    """Schema for users."""
+    """Schema for Users """
 
     id = fields.Integer(dump_only=True)
     firstname = fields.Str(required=True, validate=(required))
