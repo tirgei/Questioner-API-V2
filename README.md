@@ -92,6 +92,7 @@ foo@bar:~$ flask run
 | **HTTP METHOD** | **URI** | **ACTION** |
 | --- | --- | --- |
 | **POST** | `/api/v2/meetups` | Create a new meetup |
+| **GET** | `/api/v2/meetups` | Fetch all meetups |
 
 ## Author
 
