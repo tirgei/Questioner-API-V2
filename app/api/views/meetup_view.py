@@ -1,6 +1,7 @@
 from flask import jsonify, request, make_response
 from ..schemas.meetup_schema import MeetupSchema
 from ..models.meetup_model import MeetupModel
+from ..models.user_model import UserModel
 from marshmallow import ValidationError
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
 from flask_restful import Resource
@@ -11,6 +12,7 @@ class Meetups(Resource):
 
     def __init__(self):
         self.db = MeetupModel()
+        self.user_db = UserModel()
 
     @jwt_required
     def post(self):
@@ -20,28 +22,35 @@ class Meetups(Resource):
         status_code = 200
         response = {}
 
-        meetup_data = request.get_json()
+        current_user = get_jwt_identity()
 
-        if not meetup_data:
-            message = 'No data provided'
-            status_code = 400
-
+        if not self.user_db.is_admin(current_user):
+            message = 'Not authorized'
+            status_code = 401
+   
         else:
-            try:
-                data = MeetupSchema().load(meetup_data)
+            meetup_data = request.get_json()
 
-                new_meetup = self.db.save(data)
-                result = MeetupSchema().dump(new_meetup)
-
-                status_code = 201
-                message = 'Meetup created successfully'
-
-            except ValidationError as err:
-                errors = err.messages
-
+            if not meetup_data:
+                message = 'No data provided'
                 status_code = 400
-                message = 'Invalid data provided'
-                response.update({'errors': errors})
+
+            else:
+                try:
+                    data = MeetupSchema().load(meetup_data)
+
+                    new_meetup = self.db.save(data)
+                    result = MeetupSchema().dump(new_meetup)
+
+                    status_code = 201
+                    message = 'Meetup created successfully'
+
+                except ValidationError as err:
+                    errors = err.messages
+
+                    status_code = 400
+                    message = 'Invalid data provided'
+                    response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
