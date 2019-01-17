@@ -158,3 +158,28 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['status'], 200)
         self.assertEqual(len(data['data']), 2)
+
+    def test_fetch_specific_meetup(self):
+        """ Test fetch a specific meetup using id """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+        self.client.post('/api/v2/meetups', json=self.meetup2,
+                         headers=self.headers)
+
+        res = self.client.get('/api/v2/meetups/1')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['data']['id'], 1)
+
+    def test_fetch_non_existent_meetup(self):
+        """ Test fetch a non existing meetup """
+
+        res = self.client.get('/api/v2/meetups/10')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Meetup not found')
