@@ -19,4 +19,3 @@ class Model(ABC, DatabaseModel):
     @abstractmethod
     def where(self, key, value):
         pass
-
