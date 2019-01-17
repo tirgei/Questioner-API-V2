@@ -6,8 +6,15 @@ class CommentModel(Model):
 
     table = 'comments'
 
-    def all(self):
-        pass
+    def all(self, id):
+        """ Function to fetch all comments for a question """
+
+        query = "SELECT * FROM {} where question_id = {}".format(
+            self.table, id)
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
 
     def find(self, id):
         pass
