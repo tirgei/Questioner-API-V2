@@ -1,5 +1,5 @@
 from ..utils.base_model import Model
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class UserModel(Model):
@@ -17,12 +17,11 @@ class UserModel(Model):
             generate_password_hash(data['password'])
         )
 
-        cur = self.conn.cursor()
-        cur.execute(query)
-        result = cur.fetchone()
+        self.cur.execute(query)
+        result = self.cur.fetchone()
 
         self.conn.commit()
-        return self.user_dict(result)
+        return result
 
     def exists(self, key, value):
         """ Function to check if user exists """
@@ -34,17 +33,17 @@ class UserModel(Model):
         result = self.cur.fetchall()
         return len(result) > 0
 
+    def where(self, key, value):
+        """ Function to fetch user with key, value pair """
+
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+        return result
+
     @staticmethod
-    def user_dict(data):
-        return {
-            'id': data[0],
-            'firstname': data[1],
-            'lastname': data[2],
-            'othername': data[3],
-            'username': data[4],
-            'phonenumber': data[5],
-            'email': data[6],
-            'password': data[7],
-            'registered': data[8],
-            'admin': data[9],
-        }
+    def checkpassword(hashed_password, password):
+        """ Function to check if passwords match """
+
+        return check_password_hash(hashed_password, password)
