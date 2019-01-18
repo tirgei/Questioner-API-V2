@@ -40,6 +40,7 @@ class ProductionConfig(Config):
 
     DEBUG = False
     TESTING = False
+    DATABASE_NAME = os.getenv('DATABASE_NAME')
 
 
 app_config = {
