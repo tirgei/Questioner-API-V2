@@ -13,8 +13,6 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         """ Setup database """
 
-        os.environ['APP_ENV'] = 'testing'
-
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
