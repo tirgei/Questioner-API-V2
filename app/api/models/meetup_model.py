@@ -1,4 +1,5 @@
 from ..utils.base_model import Model
+from datetime import datetime, timedelta
 
 
 class MeetupModel(Model):
@@ -58,3 +59,16 @@ class MeetupModel(Model):
         self.cur.execute(query)
         self.conn.commit()
         return True
+
+    def upcoming(self):
+        """ Fetch upcoming meetups in the next 1 week """
+
+        today = datetime.now().strftime('%d/%m/%Y')
+        last_day = (datetime.now() + timedelta(days=7)).strftime('%d/%m/%Y')
+
+        query = "SELECT * FROM {} WHERE happening_on BETWEEN\
+        '{}' AND '{}'".format(self.table, today, last_day)
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result

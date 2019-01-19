@@ -110,23 +110,8 @@ class QuestionUpvote(Resource):
             print('### HAS VOTED: {} ###'.format(bool(voted)))
 
             if voted:
-                if voted['vote'] == 'upvote':
-                    status_code = 403
-                    message = 'Question already upvoted'
-
-                else:
-                    question = self.db.upvote(question_id)
-                    result = QuestionSchema().dump(question)
-
-                    message = 'Question upvoted successfully'
-                    status_code = 200
-                    response.update({'data': result})
-
-                    self.vote_model.update({
-                        'user_id': current_user,
-                        'question_id': question_id,
-                        'vote': 'upvote'
-                    })
+                status_code = 403
+                message = 'You have already voted for this question'
 
             else:
                 question = self.db.upvote(question_id)
@@ -171,23 +156,8 @@ class QuestionDownvote(Resource):
             voted = self.vote_model.voted(question_id, current_user)
 
             if voted:
-                if voted['vote'] == 'downvote':
-                    status_code = 403
-                    message = 'Question already downvoted'
-
-                else:
-                    question = self.db.downvote(question_id)
-                    result = QuestionSchema().dump(question)
-
-                    message = 'Question downvoted successfully'
-                    status_code = 200
-                    response.update({'data': result})
-
-                    self.vote_model.update({
-                        'user_id': current_user,
-                        'question_id': question_id,
-                        'vote': 'downvote'
-                    })
+                status_code = 403
+                message = 'You have already voted for this question'
 
             else:
                 question = self.db.downvote(question_id)

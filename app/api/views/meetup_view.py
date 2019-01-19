@@ -168,3 +168,17 @@ class MeetupRsvp(Resource):
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
+
+
+class UpcomingMeetups(Resource):
+    """ Resource for upcoming meetups endpoints """
+
+    def __init__(self):
+        self.db = MeetupModel()
+
+    def get(self):
+        """ Endpoint to fetch all meetups """
+
+        meetups = self.db.upcoming()
+        result = MeetupSchema(many=True).dump(meetups)
+        return {'status': 200, 'data': result}, 200

@@ -20,7 +20,7 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019'
+            'happening_on': '22/01/2019'
         }
 
         self.meetup2 = {
@@ -158,6 +158,48 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['status'], 200)
         self.assertEqual(len(data['data']), 2)
+
+    def test_fetch_upcoming_meetups_empty(self):
+        """ Test fetch upcoming meetups with none created yet """
+
+        res = self.client.get('/api/v2/meetups/upcoming')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 0)
+
+    def test_fetch_upcoming_meetups(self):
+        """ Test fetch upcoming meetups """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+        self.client.post('/api/v2/meetups', json=self.meetup2,
+                         headers=self.headers)
+
+        res = self.client.get('/api/v2/meetups/upcoming')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 1)
+
+    def test_fetch_upcoming_meetups_none(self):
+        """ Test fetch upcoming meetups with none in the next 1 week"""
+
+        self.meetup.update({'happening_on': '12/02/2019'})
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+        self.client.post('/api/v2/meetups', json=self.meetup2,
+                         headers=self.headers)
+
+        res = self.client.get('/api/v2/meetups/upcoming')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(len(data['data']), 0)
 
     def test_fetch_specific_meetup(self):
         """ Test fetch a specific meetup using id """
