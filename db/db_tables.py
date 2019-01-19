@@ -6,7 +6,8 @@ tables = [
     'questions',
     'comments',
     'rsvps',
-    'votes'
+    'votes',
+    'revoked_tokens'
 ]
 
 create_table_queries = [
@@ -91,6 +92,13 @@ create_table_queries = [
         user_id INTEGER NOT NULL,
         vote VARCHAR(10),
         PRIMARY KEY (question_id, user_id)
+    )
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS revoked_tokens (
+        id SERIAL PRIMARY KEY NOT NULL,
+        jti VARCHAR NOT NULL
     )
     """
 ]
