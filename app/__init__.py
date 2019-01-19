@@ -4,6 +4,7 @@ from db.db_config import connect_db
 from db.db_tables import create_tables, seed
 from app.api import v2
 from flask_jwt_extended import (JWTManager)
+from app.api.models.token_model import RevokedTokenModel
 
 
 @v2.route('/', methods=['GET'])
@@ -26,8 +27,9 @@ def create_app(config_name):
         conn = connect_db()
         create_tables(conn)
         seed(conn)
+
     except Exception as error:
-        print('Error creating tables: {}'.format(str(error)))
+        app.logger.info('Error creating tables: {}'.format(str(error)))
 
     app.register_blueprint(v2)
 
@@ -52,5 +54,10 @@ def create_app(config_name):
             'message': 'Your request could not be processed',
             'status': 500
             }), 500
+
+    @jwt.token_in_blacklist_loader
+    def check_blacklisted(token):
+        jti = token['jti']
+        return RevokedTokenModel().is_blacklisted(jti)
 
     return app
