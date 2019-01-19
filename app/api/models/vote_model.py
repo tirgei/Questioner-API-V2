@@ -26,16 +26,3 @@ class VoteModel(DatabaseModel):
 
         self.cur.execute(query)
         self.conn.commit()
-
-    def update(self, data):
-        """ Function to add new vote """
-
-        q_id = data['question_id']
-        u_id = data['user_id']
-        vote = data['vote']
-
-        query = "UPDATE {} SET vote = '{}' WHERE question_id = '{}' AND user_id = '{}'\
-        ".format(self.table, vote, q_id, u_id)
-
-        self.cur.execute(query)
-        self.conn.commit()
