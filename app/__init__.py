@@ -11,7 +11,10 @@ from app.api.models.token_model import RevokedTokenModel
 @v2.route('/index', methods=['GET'])
 def index():
     """ Endpoint for index for v2 """
-    return jsonify({'status': 200, 'message': 'Welcome to Questioner'}), 200
+    return jsonify({
+        'status': 200,
+        'message': 'Welcome to Questioner'
+        }), 200
 
 
 def create_app(config_name):
@@ -39,25 +42,54 @@ def create_app(config_name):
         """ Endpoint for landing page """
         return jsonify({
             'status': 200,
-            'message': 'Welcome to Questioner'}), 200
+            'message': 'Welcome to Questioner'
+            }), 200
 
     @app.errorhandler(404)
     def page_not_found(error):
         return jsonify({
-            'message': 'Url not found. Check your url and try again',
-            'status': 404
+            'status': 404,
+            'message': 'Url not found. Check your url and try again'
             }), 404
 
     @app.errorhandler(500)
     def internal_server_error(error):
         return jsonify({
-            'message': 'Your request could not be processed',
-            'status': 500
+            'status': 500,
+            'message': 'Your request could not be processed'
             }), 500
 
     @jwt.token_in_blacklist_loader
     def check_blacklisted(token):
         jti = token['jti']
         return RevokedTokenModel().is_blacklisted(jti)
+
+    @jwt.expired_token_loader
+    def expired_token():
+        return jsonify({
+            'status': 401,
+            'message': 'Token has expired'
+        }), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token(reason):
+        return jsonify({
+            'status': 401,
+            'message': reason
+        }), 401
+
+    @jwt.revoked_token_loader
+    def revoked_token():
+        return jsonify({
+            'status': 401,
+            'message': 'Token has been revoked'
+        }), 401
+
+    @jwt.unauthorized_loader
+    def unauthorized(reason):
+        return jsonify({
+            'status': 401,
+            'message': reason
+        }), 401
 
     return app
