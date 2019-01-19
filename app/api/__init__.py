@@ -1,7 +1,7 @@
 from flask_restful import Api
 from flask import Blueprint
 from .views.user_view import Register, Login, RefreshToken, Logout
-from .views.meetup_view import Meetups, Meetup, MeetupRsvp
+from .views.meetup_view import Meetups, Meetup, MeetupRsvp, UpcomingMeetups
 from .views.question_view import Question, QuestionList
 from .views.question_view import QuestionDownvote, QuestionUpvote
 from .views.comment_view import Comment
@@ -15,6 +15,7 @@ api.add_resource(Login, '/auth/login')
 api.add_resource(Logout, '/auth/logout')
 api.add_resource(RefreshToken, '/refresh-token')
 api.add_resource(Meetups, '/meetups')
+api.add_resource(UpcomingMeetups, '/meetups/upcoming')
 api.add_resource(Meetup, '/meetups/<int:meetup_id>')
 api.add_resource(Question, '/questions')
 api.add_resource(QuestionList, '/meetups/<int:meetup_id>/questions')
