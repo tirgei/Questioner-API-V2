@@ -12,6 +12,8 @@ class Config(object):
     DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 
 
 class DevelopmentConfig(Config):

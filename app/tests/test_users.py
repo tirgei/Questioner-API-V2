@@ -248,3 +248,45 @@ class TestUser(BaseTest):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['status'], 200)
         self.assertEqual(data['message'], 'Token refreshed successfully')
+
+    def test_logout_no_access_token(self):
+        """ Test logout without access token """
+
+        res = self.client.post('/api/v2/auth/logout')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['msg'], 'Missing Authorization Header')
+
+    def test_logout_passing_refesh_token(self):
+        """ Test logout passing refresh token """
+
+        self.headers.update({'Authorization': 'Bearer {}\
+        '.format(self.refresh_token)})
+
+        res = self.client.post('/api/v2/auth/logout', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['msg'], 'Only access tokens are allowed')
+
+    def test_logout(self):
+        """ Test logout successfully """
+
+        res = self.client.post('/api/v2/auth/logout', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Logged out successfully')
+
+    def test_logout_revoked_token(self):
+        """ Test logout without access token """
+
+        self.client.post('/api/v2/auth/logout', headers=self.headers)
+
+        res = self.client.post('/api/v2/auth/logout', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['msg'], 'Token has been revoked')

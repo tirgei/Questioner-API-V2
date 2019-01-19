@@ -86,6 +86,7 @@ foo@bar:~$ flask run
 | **POST** | `/api/v2/auth/signup` | Register a new user |
 | **POST** | `/api/v2/auth/login` | Login a user |
 | **POST** | `/api/v2/refresh-token` | Refresh access token |
+| **POST** | `/api/v2/auth/logout` | Logout a user |
 
 #### Meetup Endpoints
 
@@ -112,6 +113,27 @@ foo@bar:~$ flask run
 | --- | --- | --- |
 | **POST** | `/api/v2/questions/<int:question_id>/comments` | Post a comment to a question |
 | **GET** | `/api/v2/questions/<int:question_id>/comments` | Fetch all comments for a question |
+
+## Libraries Used
+
+- [Flask](http://flask.pocoo.org) - Python Microframework for backend solutions
+
+- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/latest/) - Flask library for JWT 
+implementation
+
+- [Flask-RESTful](https://flask-restful.readthedocs.io) - Flask extension that adds support for building REST APIs
+
+- [Marshmallow](https://marshmallow.readthedocs.io) - Framework for converting complex datatypes, such as objects, to and from native Python datatypes.
+
+- [PEP-8](https://www.python.org/dev/peps/pep-0008/) - Style Guide for Python Code
+
+- [Pytest](https://docs.pytest.org/en/latest/) - Framework for running Python tests
+
+- [Pytest-cov](https://pytest-cov.readthedocs.io) - Plugin to produces coverage reports for Pytest
+
+- [Psycopg2](http://initd.org/psycopg/) - Postgresql adapter for Python
+
+- [Gunicorn](https://gunicorn.org) - Python HTTP server 
 
 ## Author
 

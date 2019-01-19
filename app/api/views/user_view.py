@@ -3,9 +3,10 @@ from flask_restful import Resource
 from ..models.user_model import UserModel
 from ..schemas.user_schema import UserSchema
 from marshmallow import ValidationError
+from app.api.models.token_model import RevokedTokenModel
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, get_jwt_identity,
-                                jwt_refresh_token_required)
+                                jwt_refresh_token_required, get_raw_jwt)
 
 
 class Register(Resource):
@@ -141,3 +142,16 @@ class RefreshToken(Resource):
         access_token = create_access_token(identity=current_user)
         return {'status': 200, 'message': 'Token refreshed successfully',
                 'access_token': access_token}
+
+
+class Logout(Resource):
+    """ Resource to logout user """
+
+    @jwt_required
+    def post(self):
+        """ Endpoint to logout user """
+
+        user_jti = get_raw_jwt()['jti']
+
+        RevokedTokenModel().save(user_jti)
+        return {'status': 200, 'message': 'Logged out successfully'}, 200
