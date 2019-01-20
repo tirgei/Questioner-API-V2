@@ -7,6 +7,7 @@ from ..models.user_model import UserModel
 from marshmallow import ValidationError
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
 from flask_restful import Resource
+from ..schemas.user_schema import UserSchema
 
 
 class Meetups(Resource):
@@ -72,6 +73,7 @@ class Meetup(Resource):
     def __init__(self):
         self.db = MeetupModel()
         self.user_db = UserModel()
+        self.rsvp_db = RsvpModel()
 
     def get(self, meetup_id):
         """ Endpoint to fetch specific meetup """
@@ -85,8 +87,11 @@ class Meetup(Resource):
 
         else:
             meetup = self.db.find(meetup_id)
-            result = MeetupSchema().dump(meetup)
+            attendees = self.rsvp_db.attendees(meetup_id)
+            meetup['attendees'] = attendees
 
+            result = MeetupSchema().dump(meetup)
+            
             status_code = 200
             response.update({'data': result})
 
@@ -182,3 +187,35 @@ class UpcomingMeetups(Resource):
         meetups = self.db.upcoming()
         result = MeetupSchema(many=True).dump(meetups)
         return {'status': 200, 'data': result}, 200
+
+
+class MeetupAttendees(Resource):
+    """ Resource for meetup attendees """
+
+    def __init__(self):
+        self.db = MeetupModel()
+
+    def get(self, meetup_id):
+        """ Endpoint to fetch all meetup attendees """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        if not self.db.exists('id', meetup_id):
+            status_code = 404
+            message = 'Meetup not found'
+            response.update({'message': message})
+
+        else:
+            users = self.db.attendees(meetup_id)
+            result = UserSchema(many=True).dump(users)
+
+            status_code = 200
+            response.update({
+                'attendees': len(users),
+                'users': result
+            })
+
+        response.update({'status': status_code})
+        return response, status_code
