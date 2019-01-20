@@ -20,14 +20,16 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '22/01/2019'
+            'happening_on': '22/01/2019',
+            'tags': ['Python']
         }
 
         self.meetup2 = {
             'topic': 'Android',
             'description': 'Getting started with Kotlin',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019'
+            'happening_on': '30/01/2019',
+            'tags': ['Android']
         }
 
     def tearDown(self):
@@ -132,7 +134,8 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['status'], 401)
-        self.assertEqual(data['message'], 'Not authorized')
+        self.assertEqual(data['message'],
+                         'Only admin is authorized to perform this operation')
 
     def test_fetch_all_meetups_empty(self):
         """ Test fetch all meetups with none created yet """
@@ -387,3 +390,77 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['status'], 404)
         self.assertEqual(data['message'], 'Meetup not found')
+
+    def test_update_meetup_tags_not_created(self):
+        """ Test update meetup tags with meetup not created yet """
+
+        res = self.client.patch('/api/v2/meetups/4/tags', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Meetup not found')
+
+    def test_update_meetup_tags_no_data(self):
+        """ Test update meetup tags with no data passed """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/meetups/1/tags', headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'], 'No data provided')
+
+    def test_update_meetup_tags_empty_data(self):
+        """ Test update meetup tags with empty data passed """
+
+        tags = {'tags': []}
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/meetups/1/tags', json=tags,
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'],
+                         'You need to pass atleast 1 tag for the meetup')
+
+    def test_update_meetup_tags_no_tags(self):
+        """ Test update meetup tags with no tags passed """
+
+        self.meetup2.pop('tags', None)
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/meetups/1/tags', json=self.meetup2,
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
+        self.assertEqual(data['message'], 'No meetup tags provided')
+
+    def test_update_meetup_tags_successfully(self):
+        """ Test update meetup tags successfully """
+
+        tags = {'tags': ['Kotlin']}
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.patch('/api/v2/meetups/1/tags', json=tags,
+                                headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['message'], 'Meetup tags updated successfully')
+        self.assertEqual(len(data['data']['tags']), 2)
+
