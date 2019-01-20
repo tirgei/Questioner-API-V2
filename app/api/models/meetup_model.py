@@ -14,12 +14,19 @@ class MeetupModel(Model):
         return meetup
 
     def save(self, data):
-        """ Function to save new user """
+        """ Function to save new meetup """
 
-        query = "INSERT INTO {} (topic, description, location, happening_on)\
-        VALUES ('{}', '{}', '{}', '{}') RETURNING *".format(
-            self.table, data['topic'],
-            data['description'], data['location'], data['happening_on']
+        tags = '{'
+
+        for tag in data['tags']:
+            tags += '"' + tag + '",'
+
+        tags = tags[:-1] + '}'
+
+        query = "INSERT INTO {} (topic, description, tags, location, happening_on)\
+        VALUES ('{}', '{}', '{}', '{}', '{}') RETURNING *".format(
+            self.table, data['topic'], data['description'], tags,
+            data['location'], data['happening_on']
         )
 
         self.cur.execute(query)
@@ -29,7 +36,7 @@ class MeetupModel(Model):
         return result
 
     def all(self):
-        """ Function to fetch all users """
+        """ Function to fetch all meetups """
 
         query = "SELECT * FROM {}".format(self.table)
 
@@ -83,3 +90,25 @@ class MeetupModel(Model):
         self.cur.execute(query)
         result = self.cur.fetchall()
         return result
+
+    def update_tags(self, meetup_id, meetup_tags):
+        """ Function to update meetup tags """
+
+        meetup = self.where('id', meetup_id)
+        new_tags = list(set(meetup_tags + meetup['tags']))
+
+        tags = '{'
+
+        for tag in new_tags:
+            tags += '"' + tag + '",'
+
+        tags = tags[:-1] + '}'
+
+        query = "UPDATE {} SET tags = '{}' WHERE id = '{}' \
+        RETURNING *".format(self.table, tags, meetup_id)
+
+        self.cur.execute(query)
+        self.conn.commit()
+        return self.cur.fetchone()
+
+
