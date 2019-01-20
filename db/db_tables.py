@@ -34,6 +34,7 @@ create_table_queries = [
         description VARCHAR(250) NOT NULL,
         location VARCHAR(250) NOT NULL,
         happening_on VARCHAR(250) NOT NULL,
+        tags VARCHAR [],
         created_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
