@@ -28,7 +28,7 @@ class Meetups(Resource):
         current_user = get_jwt_identity()
 
         if not self.user_db.is_admin(current_user):
-            message = 'Not authorized'
+            message = 'Only admin is authorized to perform this operation'
             status_code = 401
 
         else:
@@ -91,7 +91,7 @@ class Meetup(Resource):
             meetup['attendees'] = attendees
 
             result = MeetupSchema().dump(meetup)
-            
+
             status_code = 200
             response.update({'data': result})
 
@@ -218,4 +218,56 @@ class MeetupAttendees(Resource):
             })
 
         response.update({'status': status_code})
+        return response, status_code
+
+
+class MeetupTags(Resource):
+    """ Resource for updating meetup tags """
+
+    def __init__(self):
+        self.db = MeetupModel()
+        self.user_db = UserModel()
+
+    @jwt_required
+    def patch(self, meetup_id):
+        """ Endpoint to update meetup tags """
+
+        message = ''
+        status_code = 200
+        response = {}
+
+        current_user = get_jwt_identity()
+
+        if not self.user_db.is_admin(current_user):
+            message = 'Only admin is authorized to perform this operation'
+            status_code = 401
+
+        else:
+            meetup_data = request.get_json()
+
+            if not self.db.exists('id', meetup_id):
+                status_code = 404
+                message = 'Meetup not found'
+
+            elif not meetup_data:
+                message = 'No data provided'
+                status_code = 400
+
+            elif 'tags' not in meetup_data:
+                message = 'No meetup tags provided'
+                status_code = 400
+
+            elif not len(meetup_data['tags']) > 0:
+                message = 'You need to pass atleast 1 tag for the meetup'
+                status_code = 400
+
+            else:
+                meetup = self.db.update_tags(meetup_id, meetup_data['tags'])
+                result = MeetupSchema().dump(meetup)
+
+                status_code = 200
+                message = 'Meetup tags updated successfully'
+                response.update({'data': result})
+
+        response.update({'status': status_code, 'message': message})
         return response, status_code
