@@ -29,3 +29,13 @@ class RsvpModel(DatabaseModel):
         self.cur.execute(query)
         result = self.cur.fetchone()
         return bool(result)
+
+    def attendees(self, meetup_id):
+        """ Function to get number of attendees for a meetup """
+
+        query = "SELECT * FROM {} WHERE meetup_id = '{}' AND response = '{}'\
+        ".format(self.table, meetup_id, 'yes')
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return len(result)

@@ -72,3 +72,14 @@ class MeetupModel(Model):
         self.cur.execute(query)
         result = self.cur.fetchall()
         return result
+
+    def attendees(self, meetup_id):
+        """ Fetch all attendees for an upcoming meetup """
+
+        query = "SELECT id, firstname, lastname, username FROM users WHERE\
+        id IN ( SELECT user_id FROM rsvps WHERE meetup_id = '{}' AND response \
+        = 'yes')".format(meetup_id)
+
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result

@@ -14,3 +14,4 @@ class MeetupSchema(Schema):
     images = fields.List(fields.Str(), required=False)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
+    attendees = fields.Int(dump_only=True)
