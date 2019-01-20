@@ -215,6 +215,7 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['status'], 200)
         self.assertEqual(data['data']['id'], 1)
+        self.assertEqual(data['data']['attendees'], 0)
 
     def test_fetch_non_existent_meetup(self):
         """ Test fetch a non existing meetup """
