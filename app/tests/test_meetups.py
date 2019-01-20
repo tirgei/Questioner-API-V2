@@ -346,3 +346,43 @@ class TestMeetup(BaseTest):
         self.assertEqual(res.status_code, 403)
         self.assertEqual(data['status'], 403)
         self.assertEqual(data['message'], 'Meetup already responded')
+
+    def test_fetch_meetup_attendees_none(self):
+        """ Test fetch attending users when none has rsvpd """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        res = self.client.get('api/v2/meetups/1/attendees')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['attendees'], 0)
+        self.assertEqual(len(data['users']), 0)
+
+    def test_meetup_attendees(self):
+        """ Test fetch attending users successfully """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        self.client.post('api/v2/meetups/1/yes', headers=self.headers)
+
+        res = self.client.get('api/v2/meetups/1/attendees')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['attendees'], 1)
+        self.assertEqual(len(data['users']), 1)
+
+    def test_fetch_meetup_attendes_not_created(self):
+        """ Test fetch attending users when meetup hasn't been created """
+
+        res = self.client.get('api/v2/meetups/1/attendees')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'Meetup not found')
