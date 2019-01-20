@@ -11,7 +11,8 @@ class TestComment(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019'
+            'happening_on': '22/01/2019',
+            'tags': ['Python']
         }
 
         self.question = {
