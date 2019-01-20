@@ -57,3 +57,10 @@ def date(date):
 
     if date < now:
         raise ValidationError('Date should be in the future')
+
+
+def tags(tags):
+    """ Validate meetup tags are present """
+
+    if not tags and not len(tags) > 0:
+        raise ValidationError('You need to pass atleast 1 tag for the meetup')
