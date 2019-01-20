@@ -97,6 +97,7 @@ foo@bar:~$ flask run
 | **GET** | `/api/v2/meetups/upcoming` | Fetch upcoming meetups in the next 1 week|
 | **GET** | `/api/v2/meetups/<int:meetup_id>` | Fetch specific meetup |
 | **POST** | `/api/v2/meetups/<int:meetup_id>/<string:rsvp>` | RSVP to a meetup |
+| **GET** | `/api/v2/meetups/<int:meetup_id>/attendees` | Fetch list of attendees for a meetup|
 | **DELETE** | `/api/v2/meetups/<int:meetup_id>` | Delete specific meetup |
 
 #### Question Endpoints
