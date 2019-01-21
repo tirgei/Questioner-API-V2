@@ -111,8 +111,8 @@ class MeetupModel(Model):
         self.conn.commit()
         return self.cur.fetchone()
 
-    def collides(self, data):
-        """ Check if meetup collides with another meetup """
+    def check_if_duplicate(self, data):
+        """ Check if meetup is a duplicated of another meetup """
 
         query = "SELECT * FROM {} WHERE topic = '{}' AND location = '{}'\
         ".format(self.table, data['topic'], data['location'])

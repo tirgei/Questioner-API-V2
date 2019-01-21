@@ -41,9 +41,9 @@ class Meetups(Resource):
             else:
                 try:
                     data = MeetupSchema().load(meetup_data)
-                    collides, msg = self.db.collides(data)
+                    duplicate, msg = self.db.check_if_duplicate(data)
 
-                    if collides:
+                    if duplicate:
                         status_code = 403
                         message = msg
 
