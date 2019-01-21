@@ -290,3 +290,24 @@ class TestUser(BaseTest):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['message'], 'Token has been revoked')
+
+    def test_fetch_user_not_created(self):
+        """ Test fetch user whose not been created """
+
+        res = self.client.get('/api/v2/profile/4')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['status'], 404)
+        self.assertEqual(data['message'], 'User not found')
+
+    def test_fetch_user(self):
+        """ Test fetch user successfully """
+        self.client.post('/api/v2/auth/signup', json=self.user)
+
+        res = self.client.get('/api/v2/profile/1')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['status'], 200)
+        self.assertEqual(data['data']['id'], 1)
