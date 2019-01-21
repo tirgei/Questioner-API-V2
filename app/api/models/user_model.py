@@ -8,7 +8,31 @@ class UserModel(Model):
     table = 'users'
 
     def find(self, id):
-        pass
+        """ Function to fetch single user profile """
+
+        questions_query = "SELECT COUNT(DISTINCT id)\
+        FROM questions WHERE user_id = '{}'".format(id)
+
+        self.cur.execute(questions_query)
+        questions_asked = self.cur.fetchone()
+
+        comments_query = "SELECT COUNT(DISTINCT question_id)\
+        FROM comments WHERE user_id = '{}'".format(id)
+
+        self.cur.execute(comments_query)
+        questions_commented = self.cur.fetchone()
+
+        query = "SELECT users.id, users.firstname, users.lastname, users.username\
+        FROM users WHERE id = '{}'".format(id)
+
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+
+        result.update({
+            'questions_asked': questions_asked['count'],
+            'questions_commented': questions_commented['count']
+            })
+        return result
 
     def save(self, data):
         """ Function to save new user """

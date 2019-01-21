@@ -155,3 +155,29 @@ class Logout(Resource):
 
         RevokedTokenModel().save(user_jti)
         return {'status': 200, 'message': 'Logged out successfully'}, 200
+
+
+class Profile(Resource):
+    """ Resource for user profile """
+
+    def __init__(self):
+        self.db = UserModel()
+
+    def get(self, user_id):
+        """ Endpoint to fetch user profile """
+
+        status_code = 200
+        response = {}
+
+        if not self.db.exists('id', user_id):
+            status_code = 404
+            response.update({'message': 'User not found'})
+        else:
+            user = self.db.find(user_id)
+            result = UserSchema().dump(user)
+
+            status_code = 200
+            response.update({'data': result})
+
+        response.update({'status': status_code})
+        return response, status_code

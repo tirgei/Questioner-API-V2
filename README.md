@@ -86,6 +86,7 @@ foo@bar:~$ flask run
 | **POST** | `/api/v2/auth/signup` | Register a new user |
 | **POST** | `/api/v2/auth/login` | Login a user |
 | **POST** | `/api/v2/refresh-token` | Refresh access token |
+| **GET** | `/api/v2/profile/<int:user_id>` | Fetch a users profile |
 | **POST** | `/api/v2/auth/logout` | Logout a user |
 
 #### Meetup Endpoints
