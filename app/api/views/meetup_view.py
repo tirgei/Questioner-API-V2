@@ -41,13 +41,19 @@ class Meetups(Resource):
             else:
                 try:
                     data = MeetupSchema().load(meetup_data)
+                    collides, msg = self.db.collides(data)
 
-                    new_meetup = self.db.save(data)
-                    result = MeetupSchema().dump(new_meetup)
+                    if collides:
+                        status_code = 403
+                        message = msg
 
-                    status_code = 201
-                    message = 'Meetup created successfully'
-                    response.update({'data': result})
+                    else:
+                        new_meetup = self.db.save(data)
+                        result = MeetupSchema().dump(new_meetup)
+
+                        status_code = 201
+                        message = 'Meetup created successfully'
+                        response.update({'data': result})
 
                 except ValidationError as err:
                     errors = err.messages
