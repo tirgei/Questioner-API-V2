@@ -15,3 +15,5 @@ class UserSchema(Schema):
     othername = fields.Str(required=False)
     password = fields.Str(required=True, validate=(required, password))
     registered = fields.DateTime(dump_only=True)
+    questions_asked = fields.Int(dump_only=True)
+    questions_commented = fields.Int(dump_only=True)
