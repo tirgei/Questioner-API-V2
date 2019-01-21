@@ -111,4 +111,34 @@ class MeetupModel(Model):
         self.conn.commit()
         return self.cur.fetchone()
 
+    def check_if_duplicate(self, data):
+        """ Check if meetup is a duplicated of another meetup """
 
+        query = "SELECT * FROM {} WHERE topic = '{}' AND location = '{}'\
+        ".format(self.table, data['topic'], data['location'])
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+
+        if result:
+            return True, 'Meetup with same topic at the same venue\
+            already exists'
+
+        query = "SELECT * FROM {} WHERE happening_on = '{}' AND location = '{}'\
+        ".format(self.table, data['happening_on'], data['location'])
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+
+        if result:
+            return True, 'Meetup happening the same date at the same venue \
+            already exists'
+
+        query = "SELECT * FROM {} WHERE topic = '{}' AND happening_on = '{}'\
+        ".format(self.table, data['topic'], data['happening_on'])
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+
+        if result:
+            return True, 'Meetup happening the same date with same topic \
+            already exists'
+
+        return False, None

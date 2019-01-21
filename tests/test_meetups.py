@@ -124,7 +124,8 @@ class TestMeetup(BaseTest):
     def test_create_meetup_not_admin(self):
         """ Test create meetup when not admin """
 
-        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        self.client.post('/api/v2/auth/signup', json=self.user)
+        resp = self.client.post('/api/v2/auth/login', json=self.user)
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 
@@ -136,6 +137,48 @@ class TestMeetup(BaseTest):
         self.assertEqual(data['status'], 401)
         self.assertEqual(data['message'],
                          'Only admin is authorized to perform this operation')
+
+    def test_create_meetup_same_location_same_topic(self):
+        """ Test create meetup at same location and same topic """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        self.meetup.update({'happening_on': '29/03/2019'})
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
+
+    def test_create_meetup_same_topic_same_day(self):
+        """ Test create meetup same topic and same day """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        self.meetup.update({'location': 'ihub'})
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
+
+    def test_create_meetup_same_location_same_day(self):
+        """ Test create meetup same location and same day """
+
+        self.client.post('/api/v2/meetups', json=self.meetup,
+                         headers=self.headers)
+
+        self.meetup.update({'topic': 'Swift'})
+        res = self.client.post('/api/v2/meetups', json=self.meetup,
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
 
     def test_fetch_all_meetups_empty(self):
         """ Test fetch all meetups with none created yet """
@@ -257,7 +300,8 @@ class TestMeetup(BaseTest):
     def test_delete_meetup_not_admin(self):
         """ Test delete meetup successfully """
 
-        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        self.client.post('/api/v2/auth/signup', json=self.user)
+        resp = self.client.post('/api/v2/auth/login', json=self.user)
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 

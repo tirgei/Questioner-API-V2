@@ -43,15 +43,11 @@ class Register(Resource):
                 else:
                     user = self.db.save(data)
                     result = UserSchema(exclude=['password']).dump(user)
-                    access_token = create_access_token(identity=user['id'])
-                    refresh_token = create_refresh_token(identity=user['id'])
 
                     status_code = 201
                     message = 'User created successfully'
                     response.update({
-                        'data': result,
-                        'access_token': access_token,
-                        'refresh_token': refresh_token
+                        'data': result
                     })
 
             except ValidationError as error:
