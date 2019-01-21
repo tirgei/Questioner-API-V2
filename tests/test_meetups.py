@@ -124,7 +124,8 @@ class TestMeetup(BaseTest):
     def test_create_meetup_not_admin(self):
         """ Test create meetup when not admin """
 
-        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        self.client.post('/api/v2/auth/signup', json=self.user)
+        resp = self.client.post('/api/v2/auth/login', json=self.user)
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 
@@ -257,7 +258,8 @@ class TestMeetup(BaseTest):
     def test_delete_meetup_not_admin(self):
         """ Test delete meetup successfully """
 
-        resp = self.client.post('/api/v2/auth/signup', json=self.user)
+        self.client.post('/api/v2/auth/signup', json=self.user)
+        resp = self.client.post('/api/v2/auth/login', json=self.user)
         token = resp.get_json()['access_token']
         self.headers.update({'Authorization': 'Bearer {}'.format(token)})
 
