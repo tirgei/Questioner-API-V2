@@ -11,7 +11,7 @@ class TestComment(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '22/01/2019',
+            'happening_on': '23/01/2019',
             'tags': ['Python']
         }
 
@@ -29,8 +29,10 @@ class TestComment(BaseTest):
             'body': 'Yeah.. they should especially do tests'
         }
 
-        self.client.post('/api/v2/meetups', json=self.meetup,
+        res_3 = self.client.post('/api/v2/meetups', json=self.meetup,
                          headers=self.headers)
+
+        print('####\n\n\n {} \n\n\#####'.format(res_3.get_json()))
         self.client.post('/api/v2/questions', json=self.question,
                          headers=self.headers)
 
