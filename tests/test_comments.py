@@ -29,10 +29,9 @@ class TestComment(BaseTest):
             'body': 'Yeah.. they should especially do tests'
         }
 
-        res_3 = self.client.post('/api/v2/meetups', json=self.meetup,
+        self.client.post('/api/v2/meetups', json=self.meetup,
                          headers=self.headers)
 
-        print('####\n\n\n {} \n\n\#####'.format(res_3.get_json()))
         self.client.post('/api/v2/questions', json=self.question,
                          headers=self.headers)
 
