@@ -11,7 +11,7 @@ class TestComment(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '23/01/2019',
+            'happening_on': '26/01/2019',
             'tags': ['Python']
         }
 
@@ -96,7 +96,7 @@ class TestComment(BaseTest):
 
     def test_fetch_all_comments(self):
         """ Test fetch all comments for a question """
-        
+
         self.client.post('/api/v2/questions/1/comments', json=self.comment,
                          headers=self.headers)
         self.client.post('/api/v2/questions/1/comments', json=self.comment2,
@@ -111,7 +111,7 @@ class TestComment(BaseTest):
 
     def test_fetch_all_comments_empty(self):
         """ Test fetch all comments for a question with none posted """
-        
+
         res = self.client.get('/api/v2/questions/1/comments')
         data = res.get_json()
 

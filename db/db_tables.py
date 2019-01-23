@@ -135,7 +135,13 @@ def create_tables(connection):
 
 def seed(connection):
     cur = connection.cursor()
-    cur.execute("INSERT INTO users (firstname, lastname, username, email, password, admin)\
+
+    user_query = "SELECT * FROM users WHERE username = 'tirgei'"
+    cur.execute(user_query)
+    result = cur.fetchone()
+
+    if not result:
+        cur.execute("INSERT INTO users (firstname, lastname, username, email, password, admin)\
         VALUES ('Vincent', 'Tirgei', 'tirgei', 'admin@app.com', '{}', True)\
         ".format(generate_password_hash('asf8$#Er0')))
-    connection.commit()
+        connection.commit()
