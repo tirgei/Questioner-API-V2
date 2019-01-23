@@ -70,8 +70,8 @@ class MeetupModel(Model):
     def upcoming(self):
         """ Fetch upcoming meetups in the next 1 week """
 
-        today = datetime.now().strftime('%d/%m/%Y')
-        last_day = (datetime.now() + timedelta(days=7)).strftime('%d/%m/%Y')
+        today = datetime.now().strftime("%Y-%m-%d")
+        last_day = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
 
         query = "SELECT * FROM {} WHERE happening_on BETWEEN\
         '{}' AND '{}'".format(self.table, today, last_day)

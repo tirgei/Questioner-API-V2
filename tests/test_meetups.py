@@ -20,7 +20,7 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '23/01/2019',
+            'happening_on': '26/01/2019',
             'tags': ['Python']
         }
 
@@ -28,7 +28,7 @@ class TestMeetup(BaseTest):
             'topic': 'Android',
             'description': 'Getting started with Kotlin',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019',
+            'happening_on': '25/12/2019',
             'tags': ['Android']
         }
 
@@ -507,4 +507,3 @@ class TestMeetup(BaseTest):
         self.assertEqual(data['status'], 200)
         self.assertEqual(data['message'], 'Meetup tags updated successfully')
         self.assertEqual(len(data['data']['tags']), 2)
-
