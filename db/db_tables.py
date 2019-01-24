@@ -53,8 +53,8 @@ create_table_queries = [
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
-        FOREIGN KEY (meetup_id) REFERENCES meetups(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (meetup_id) REFERENCES meetups(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
     """,
 
@@ -68,8 +68,8 @@ create_table_queries = [
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
-        FOREIGN KEY (question_id) REFERENCES questions(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
     """,
 
