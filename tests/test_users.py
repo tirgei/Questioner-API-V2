@@ -65,6 +65,42 @@ class TestUser(BaseTest):
         self.assertEqual(data['status'], 422)
         self.assertEqual(data['message'], 'Invalid data provided in the request')
 
+    def test_sign_up_invalid_phonenumber(self):
+        """ Test sign up with an invalid phonenumber """
+
+        self.user.update({'phonenumber': 'fdsgfgfj'})
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
+
+    def test_sign_up_short_phonenumber(self):
+        """ Test sign up with a short phonenumber """
+
+        self.user.update({'phonenumber': '0712345'})
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
+
+    def test_sign_up_invalid_username(self):
+        """ Test sign up with an invalid username """
+
+        self.user.update({'username': '#@&$(**$&(@'})
+
+        res = self.client.post('/api/v2/auth/signup', json=self.user)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
+
     def test_sign_up_invalid_email(self):
         """ Test sign up with an invalid email """
 
