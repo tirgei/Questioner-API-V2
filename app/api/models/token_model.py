@@ -1,7 +1,7 @@
-from ..utils.database_model import DatabaseModel
+from db.db_config import DatabaseConnection
 
 
-class RevokedTokenModel(DatabaseModel):
+class RevokedTokenModel(DatabaseConnection):
     """ Model class for revoked tokens """
 
     table = 'revoked_tokens'
@@ -9,11 +9,10 @@ class RevokedTokenModel(DatabaseModel):
     def save(self, jti):
         """ Function to save new jti """
 
-        query = "INSERT INTO {} (jti) VALUES ('{}')".format(
+        query = "INSERT INTO {} (jti) VALUES ('{}') RETURNING *".format(
             self.table, jti)
 
-        self.cur.execute(query)
-        self.conn.commit()
+        self.insert(query)
 
     def is_blacklisted(self, jti):
         """ Function to check if jti is blacklisted """
@@ -21,6 +20,5 @@ class RevokedTokenModel(DatabaseModel):
         query = "SELECT * FROM {} where jti = '{}'".format(
             self.table, jti)
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
+        result = self.fetch_one(query)
         return bool(result)

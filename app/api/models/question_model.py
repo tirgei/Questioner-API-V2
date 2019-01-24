@@ -12,9 +12,7 @@ class QuestionModel(Model):
         query = "SELECT * FROM {} where meetup_id = {}".format(
             self.table, id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        return result
+        return self.fetch_all(query)
 
     def find(self, id):
         pass
@@ -28,20 +26,15 @@ class QuestionModel(Model):
             data['user_id']
         )
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-
-        self.conn.commit()
-        return result
+        return self.insert(query)
 
     def exists(self, key, value):
         """ Function to check if comment exists """
 
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
 
-        result = self.cur.fetchall()
+        result = self.fetch_all(query)
         return len(result) > 0
 
     def upvote(self, question_id):
@@ -53,9 +46,7 @@ class QuestionModel(Model):
         query = "UPDATE {} SET votes = '{}' WHERE id = '{}' \
         RETURNING *".format(self.table, votes, question_id)
 
-        self.cur.execute(query)
-        self.conn.commit()
-        return self.cur.fetchone()
+        return self.insert(query)
 
     def downvote(self, question_id):
         """ Function to downvote question """
@@ -66,16 +57,13 @@ class QuestionModel(Model):
         query = "UPDATE {} SET votes = '{}' WHERE id = '{}' \
         RETURNING *".format(self.table, votes, question_id)
 
-        self.cur.execute(query)
-        self.conn.commit()
-        return self.cur.fetchone()
+        return self.insert(query)
 
     def where(self, key, value):
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-        return result
+
+        return self.fetch_one(query)
 
     def delete(self, id):
         pass

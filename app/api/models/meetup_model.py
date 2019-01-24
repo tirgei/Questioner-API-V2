@@ -29,42 +29,34 @@ class MeetupModel(Model):
             data['location'], data['happening_on']
         )
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-
-        self.conn.commit()
-        return result
+        return self.insert(query)
 
     def all(self):
         """ Function to fetch all meetups """
 
         query = "SELECT * FROM {}".format(self.table)
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        return result
+        return self.fetch_all(query)
 
     def exists(self, key, value):
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
 
-        result = self.cur.fetchall()
+        result = self.fetch_all(query)
         return len(result) > 0
 
     def where(self, key, value):
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-        return result
+
+        return self.fetch_one(query)
 
     def delete(self, id):
         """ Function to delete meetup """
 
         query = "DELETE FROM {} WHERE id = {}".format(self.table, id)
-        self.cur.execute(query)
-        self.conn.commit()
+
+        self.remove(query)
         return True
 
     def upcoming(self):
@@ -76,9 +68,7 @@ class MeetupModel(Model):
         query = "SELECT * FROM {} WHERE happening_on BETWEEN\
         '{}' AND '{}'".format(self.table, today, last_day)
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        return result
+        return self.fetch_all(query)
 
     def attendees(self, meetup_id):
         """ Fetch all attendees for an upcoming meetup """
@@ -87,9 +77,7 @@ class MeetupModel(Model):
         id IN ( SELECT user_id FROM rsvps WHERE meetup_id = '{}' AND response \
         = 'yes')".format(meetup_id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        return result
+        return self.fetch_all(query)
 
     def update_tags(self, meetup_id, meetup_tags):
         """ Function to update meetup tags """
@@ -107,36 +95,31 @@ class MeetupModel(Model):
         query = "UPDATE {} SET tags = '{}' WHERE id = '{}' \
         RETURNING *".format(self.table, tags, meetup_id)
 
-        self.cur.execute(query)
-        self.conn.commit()
-        return self.cur.fetchone()
+        return self.insert(query)
 
     def check_if_duplicate(self, data):
         """ Check if meetup is a duplicated of another meetup """
 
         query = "SELECT * FROM {} WHERE topic = '{}' AND location = '{}'\
         ".format(self.table, data['topic'], data['location'])
-        self.cur.execute(query)
-        result = self.cur.fetchone()
 
+        result = self.fetch_one(query)
         if result:
             return True, 'Meetup with same topic at the same venue\
             already exists'
 
         query = "SELECT * FROM {} WHERE happening_on = '{}' AND location = '{}'\
         ".format(self.table, data['happening_on'], data['location'])
-        self.cur.execute(query)
-        result = self.cur.fetchone()
 
+        result = self.fetch_one(query)
         if result:
             return True, 'Meetup happening the same date at the same venue \
             already exists'
 
         query = "SELECT * FROM {} WHERE topic = '{}' AND happening_on = '{}'\
         ".format(self.table, data['topic'], data['happening_on'])
-        self.cur.execute(query)
-        result = self.cur.fetchone()
 
+        result = self.fetch_one(query)
         if result:
             return True, 'Meetup happening the same date with same topic \
             already exists'

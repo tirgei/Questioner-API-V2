@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
-from ..utils.database_model import DatabaseModel
+from db.db_config import DatabaseConnection
 
 
-class Model(ABC, DatabaseModel):
+class Model(ABC, DatabaseConnection):
     """ Base model class for objects """
-
-    def __init__(self):
-        super().__init__()
 
     @abstractmethod
     def all(self):

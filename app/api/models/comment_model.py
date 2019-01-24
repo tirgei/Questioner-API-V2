@@ -12,9 +12,7 @@ class CommentModel(Model):
         query = "SELECT * FROM {} where question_id = {}".format(
             self.table, id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        return result
+        return self.fetch_all(query)
 
     def find(self, id):
         pass
@@ -27,11 +25,7 @@ class CommentModel(Model):
             self.table, data['body'], data['question_id'], data['user_id']
         )
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-
-        self.conn.commit()
-        return result
+        return self.insert(query)
 
     def exists(self, key, value):
         pass

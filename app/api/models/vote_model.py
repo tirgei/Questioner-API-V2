@@ -1,7 +1,7 @@
-from ..utils.database_model import DatabaseModel
+from db.db_config import DatabaseConnection
 
 
-class VoteModel(DatabaseModel):
+class VoteModel(DatabaseConnection):
     """ Model class for vote """
 
     table = 'votes'
@@ -12,17 +12,14 @@ class VoteModel(DatabaseModel):
         query = "SELECT * FROM {} WHERE question_id = '{}' AND user_id = '{}'\
         ".format(self.table, question_id, user_id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-        return result
+        return self.fetch_one(query)
 
     def add(self, data):
         """ Function to add new vote """
 
         query = "INSERT INTO {} (question_id, user_id, vote) VALUES\
-        ('{}', '{}', '{}')".format(
+        ('{}', '{}', '{}') RETURNING *".format(
             self.table, data['question_id'], data['user_id'], data['vote']
         )
 
-        self.cur.execute(query)
-        self.conn.commit()
+        self.insert(query)
