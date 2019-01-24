@@ -62,7 +62,7 @@ def tags(tags):
 
     else:
         for tag in tags:
-            required(tag)
+            return required(tag)
 
 
 def phonenumber(phone):
