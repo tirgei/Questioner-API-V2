@@ -26,7 +26,7 @@ class Register(Resource):
 
         if not signup_data:
             status_code = 400
-            message = 'No data provided'
+            message = 'No data provided in the request'
 
         else:
             try:
@@ -51,8 +51,8 @@ class Register(Resource):
                     })
 
             except ValidationError as error:
-                status_code = 400
-                message = 'Invalid data provided'
+                status_code = 422
+                message = 'Invalid data provided in the request'
 
                 response.update({'errors': error.messages})
 
@@ -76,7 +76,7 @@ class Login(Resource):
         login_data = request.get_json()
 
         if not login_data:
-            message = 'No data provided'
+            message = 'No data provided in the request'
             status_code = 400
 
         else:
@@ -95,7 +95,7 @@ class Login(Resource):
                         user = self.db.where('username', username)
 
                         if not self.db.checkpassword(user['password'], pw):
-                            status_code = 422
+                            status_code = 400
                             message = 'Incorrect password'
 
                         else:
@@ -114,13 +114,13 @@ class Login(Resource):
 
                 except:
                     status_code = 400
-                    message = 'Invalid credentials'
+                    message = 'Invalid credentials provided'
 
             except ValidationError as error:
                 errors = error.messages
 
-                status_code = 400
-                message = 'Invalid data provided'
+                status_code = 422
+                message = 'Invalid data provided in the request'
                 response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})

@@ -27,7 +27,7 @@ class TestUser(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_sign_up_empty_data(self):
         """ Test sign up sending empty data """
@@ -39,7 +39,7 @@ class TestUser(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_sign_up_empty_fields(self):
         """ Test sign up empty fields """
@@ -49,9 +49,9 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/signup', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_sign_up_invalid_password(self):
         """ Test sign up with an invalid password """
@@ -61,9 +61,9 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/signup', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_sign_up_invalid_email(self):
         """ Test sign up with an invalid email """
@@ -73,9 +73,9 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/signup', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_sign_up_short_password(self):
         """ Test sign up with a short password """
@@ -85,9 +85,9 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/signup', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_sign_up_successfully(self):
         """ Test sign up successfully """
@@ -136,14 +136,14 @@ class TestUser(BaseTest):
         self.assertEqual(data['message'], 'Email already exists')
 
     def test_login_no_data(self):
-        """ Test login with no data provided """
+        """ Test login with No data provided in the request """
 
         res = self.client.post('/api/v2/auth/login')
         data = res.get_json()
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_login_empty_data(self):
         """ Test login with empty data provided """
@@ -155,7 +155,7 @@ class TestUser(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_login_unregistered_user(self):
         """ Test login with unregistered user credentials """
@@ -190,7 +190,7 @@ class TestUser(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid credentials')
+        self.assertEqual(data['message'], 'Invalid credentials provided')
 
     def test_login_invalid_password(self):
         """ Test login with invalid password """
@@ -201,9 +201,9 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/login', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_login_incorrect_password(self):
         """ Test login with invalid password """
@@ -214,8 +214,8 @@ class TestUser(BaseTest):
         res = self.client.post('/api/v2/auth/login', json=self.user)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['status'], 422)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['status'], 400)
         self.assertEqual(data['message'], 'Incorrect password')
 
     def test_refresh_access_token_no_headers(self):

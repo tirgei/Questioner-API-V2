@@ -29,7 +29,7 @@ class Comment(Resource):
             status_code = 404
 
         elif not comment_data:
-            message = 'No data provided'
+            message = 'No data provided in the request'
             status_code = 400
 
         else:
@@ -48,7 +48,7 @@ class Comment(Resource):
             except ValidationError as err:
                 errors = err.messages
 
-                status_code = 400
+                status_code = 422
                 message = 'Invalid data provided'
                 response.update({'errors': errors})
 

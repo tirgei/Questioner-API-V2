@@ -58,7 +58,7 @@ class TestComment(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_comment_question_empty_data(self):
         """ Test post comment with empty data """
@@ -71,7 +71,7 @@ class TestComment(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_comment(self):
         """ Test post comment successfully """

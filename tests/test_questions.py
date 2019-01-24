@@ -55,9 +55,9 @@ class TestQuestion(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def post_question_no_data(self):
         """ Test post question with no data sent """
@@ -67,7 +67,7 @@ class TestQuestion(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_question_empty_data(self):
         """ Test post question with empty data sent """
@@ -80,7 +80,7 @@ class TestQuestion(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_question_missing_fields(self):
         """ Test post question with missing fields in data sent """
@@ -91,9 +91,9 @@ class TestQuestion(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_post_question(self):
         """ Test post question successfully """
@@ -179,8 +179,8 @@ class TestQuestion(BaseTest):
                                 headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
         self.assertEqual(data['message'],
                          'You have already voted for this question')
 
@@ -222,7 +222,7 @@ class TestQuestion(BaseTest):
                                 headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
         self.assertEqual(data['message'],
                          'You have already voted for this question')
