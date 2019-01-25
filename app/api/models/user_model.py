@@ -13,20 +13,15 @@ class UserModel(Model):
         questions_query = "SELECT COUNT(DISTINCT id)\
         FROM questions WHERE user_id = '{}'".format(id)
 
-        self.cur.execute(questions_query)
-        questions_asked = self.cur.fetchone()
-
         comments_query = "SELECT COUNT(DISTINCT question_id)\
         FROM comments WHERE user_id = '{}'".format(id)
-
-        self.cur.execute(comments_query)
-        questions_commented = self.cur.fetchone()
 
         query = "SELECT users.id, users.firstname, users.lastname, users.username\
         FROM users WHERE id = '{}'".format(id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
+        questions_asked = self.fetch_one(questions_query)
+        questions_commented = self.fetch_one(comments_query)
+        result = self.fetch_one(query)
 
         result.update({
             'questions_asked': questions_asked['count'],
@@ -37,27 +32,22 @@ class UserModel(Model):
     def save(self, data):
         """ Function to save new user """
 
-        query = "INSERT INTO {} (firstname, lastname, username, email, \
-        password) VALUES ('{}', '{}', '{}', '{}', '{}') RETURNING *".format(
+        query = "INSERT INTO {} (firstname, lastname, username, phonenumber, email, \
+        password) VALUES ('{}', '{}', '{}', '{}', '{}', '{}') RETURNING *".format(
             self.table, data['firstname'],
-            data['lastname'], data['username'], data['email'],
+            data['lastname'], data['username'], data['phonenumber'], data['email'],
             generate_password_hash(data['password'])
         )
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-
-        self.conn.commit()
-        return result
+        return self.insert(query)
 
     def exists(self, key, value):
         """ Function to check if user exists """
 
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
 
-        result = self.cur.fetchall()
+        result = self.fetch_all(query)
         return len(result) > 0
 
     def where(self, key, value):
@@ -65,9 +55,8 @@ class UserModel(Model):
 
         query = "SELECT * FROM {} WHERE {} = '{}'".format(
             self.table, key, value)
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-        return result
+            
+        return self.fetch_one(query)
 
     def delete(self, id):
         pass

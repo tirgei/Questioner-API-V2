@@ -8,23 +8,15 @@ def required(value):
 
     if isinstance(value, str):
         if not value.strip(' '):
-            raise ValidationError('This parameter cannot be null')
+            raise ValidationError('This field cannot be empty')
         return value
-
-
-def email(email):
-    """ Validate email format """
-
-    if not re.match(r"(^[a-zA-z0-9_.]+@[a-zA-z0-9-]+\.[a-z]+$)", email):
-        raise ValidationError('Invalid email format')
-
-    return email
 
 
 def password(password):
     """ Validate password is Strong """
 
-    message = 'Invalid password'
+    message = 'Password should contain atleast 1 small letter, 1 capital\
+    letter, 1 character and 1 digit'
 
     if len(password) < 8:
         raise ValidationError(message)
@@ -44,6 +36,9 @@ def password(password):
     if sum(scores.values()) < 3:
         raise ValidationError(message)
 
+    elif ' ' in password:
+        raise ValidationError('Password should not contain any spaces')
+
 
 def date(date):
     """ Function to validate meetup date """
@@ -56,7 +51,7 @@ def date(date):
     now = datetime.now()
 
     if date < now:
-        raise ValidationError('Date should be in the future')
+        raise ValidationError('Date should not be in the past')
 
 
 def tags(tags):
@@ -64,3 +59,24 @@ def tags(tags):
 
     if not tags and not len(tags) > 0:
         raise ValidationError('You need to pass atleast 1 tag for the meetup')
+
+    else:
+        for tag in tags:
+            return required(tag)
+
+
+def phonenumber(phone):
+    """ Validate phone number """
+
+    if not re.match('^[0-9]*$', phone):
+        raise ValidationError('Phone number should be digits only')
+
+    elif len(phone) < 10:
+        raise ValidationError('Phone number should be atleast 10 digits')
+
+
+def name(name):
+    """ Validate name """
+
+    if not name.isalpha():
+        raise ValidationError('Name should contain only letters')

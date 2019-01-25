@@ -1,10 +1,6 @@
-import os
 import unittest
-from flask import g
 from app import create_app
-from db.db_tables import drop_tables, seed
-from app.api.models.user_model import UserModel
-from app.api.utils.database_model import DatabaseModel
+from db.db_config import DatabaseConnection
 
 
 class BaseTest(unittest.TestCase):
@@ -17,10 +13,8 @@ class BaseTest(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
 
-        self.db = DatabaseModel()
         self.client = self.app.test_client()
 
-        seed(g.conn)
         res = self.client.post('/api/v2/auth/login', json={
             'username': 'tirgei', 'password': 'asf8$#Er0'})
 
@@ -30,4 +24,6 @@ class BaseTest(unittest.TestCase):
 
     def tearDown(self):
         """ Clear database """
-        drop_tables(g.conn)
+        db = DatabaseConnection()
+        db.init_connection('testing')
+        db.drop_tables()

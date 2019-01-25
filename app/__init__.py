@@ -1,10 +1,10 @@
 from flask import Flask, jsonify
 from instance.config import app_config
-from db.db_config import connect_db
-from db.db_tables import create_tables, seed
+from db.db_config import DatabaseConnection
 from app.api import v2
 from flask_jwt_extended import (JWTManager)
 from app.api.models.token_model import RevokedTokenModel
+from flask_cors import CORS
 
 
 @v2.route('/', methods=['GET'])
@@ -23,18 +23,34 @@ def create_app(config_name):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
+    app.url_map.strict_slashes = False
+    CORS(app)
 
     jwt = JWTManager(app)
 
-    try:
-        conn = connect_db()
-        create_tables(conn)
-        seed(conn)
-
-    except Exception as error:
-        app.logger.info('Error creating tables: {}'.format(str(error)))
+    handlers(app, jwt)
+    initialize_db(config_name)
 
     app.register_blueprint(v2)
+
+    return app
+
+
+def initialize_db(config_name):
+    """ Function to initialize db """
+
+    try:
+        db = DatabaseConnection()
+        db.init_connection(config_name)
+        db.create_tables()
+        db.seed()
+
+    except Exception as error:
+        print('Error initiating DB: {}'.format(str(error)))
+
+
+def handlers(app, jwt):
+    """ Function to initialize error handlers """
 
     @app.route('/', methods=['GET'])
     @app.route('/index', methods=['GET'])
@@ -91,5 +107,3 @@ def create_app(config_name):
             'status': 401,
             'message': reason
         }), 401
-
-    return app

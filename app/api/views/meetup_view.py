@@ -29,13 +29,13 @@ class Meetups(Resource):
 
         if not self.user_db.is_admin(current_user):
             message = 'Only admin is authorized to perform this operation'
-            status_code = 401
+            status_code = 403
 
         else:
             meetup_data = request.get_json()
 
             if not meetup_data:
-                message = 'No data provided'
+                message = 'No data provided in the request'
                 status_code = 400
 
             else:
@@ -44,7 +44,7 @@ class Meetups(Resource):
                     duplicate, msg = self.db.check_if_duplicate(data)
 
                     if duplicate:
-                        status_code = 403
+                        status_code = 409
                         message = msg
 
                     else:
@@ -58,8 +58,8 @@ class Meetups(Resource):
                 except ValidationError as err:
                     errors = err.messages
 
-                    status_code = 400
-                    message = 'Invalid data provided'
+                    status_code = 422
+                    message = 'Invalid data provided in the request'
                     response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})
@@ -115,8 +115,8 @@ class Meetup(Resource):
         current_user = get_jwt_identity()
 
         if not self.user_db.is_admin(current_user):
-            message = 'Not authorized'
-            status_code = 401
+            message = 'Only admin user is authorized to delete meetups'
+            status_code = 403
 
         else:
             if not self.db.exists('id', meetup_id):
@@ -158,11 +158,11 @@ class MeetupRsvp(Resource):
 
         elif rsvp not in valid_responses:
             status_code = 400
-            message = 'Invalid rsvp'
+            message = 'Invalid rsvp. The allowed options are yes, no or maybe'
 
         elif self.db.exists(meetup_id, current_user):
-            status_code = 403
-            message = 'Meetup already responded'
+            status_code = 409
+            message = 'Reponse already sent for this meetup' 
 
         else:
             rsvp_data = {
@@ -245,8 +245,8 @@ class MeetupTags(Resource):
         current_user = get_jwt_identity()
 
         if not self.user_db.is_admin(current_user):
-            message = 'Only admin is authorized to perform this operation'
-            status_code = 401
+            message = 'Only admin user is authorized to update meetups'
+            status_code = 403
 
         else:
             meetup_data = request.get_json()
@@ -256,11 +256,11 @@ class MeetupTags(Resource):
                 message = 'Meetup not found'
 
             elif not meetup_data:
-                message = 'No data provided'
+                message = 'No data provided in the request'
                 status_code = 400
 
             elif 'tags' not in meetup_data:
-                message = 'No meetup tags provided'
+                message = 'No meetup tags provided in the request'
                 status_code = 400
 
             elif not len(meetup_data['tags']) > 0:

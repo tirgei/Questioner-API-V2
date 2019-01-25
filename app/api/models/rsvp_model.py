@@ -1,7 +1,7 @@
-from ..utils.database_model import DatabaseModel
+from db.db_config import DatabaseConnection
 
 
-class RsvpModel(DatabaseModel):
+class RsvpModel(DatabaseConnection):
     """ Model class for rsvp """
 
     table = 'rsvps'
@@ -14,11 +14,7 @@ class RsvpModel(DatabaseModel):
             self.table, data['meetup_id'], data['user_id'], data['response']
         )
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
-
-        self.conn.commit()
-        return result
+        return self.insert(query)
 
     def exists(self, meetup_id, user_id):
         """ Function to check user has rsvp """
@@ -26,8 +22,7 @@ class RsvpModel(DatabaseModel):
         query = "SELECT * FROM {} WHERE user_id = '{}' AND meetup_id = '{}'\
         ".format(self.table, user_id, meetup_id)
 
-        self.cur.execute(query)
-        result = self.cur.fetchone()
+        result = self.fetch_one(query)
         return bool(result)
 
     def attendees(self, meetup_id):
@@ -36,6 +31,5 @@ class RsvpModel(DatabaseModel):
         query = "SELECT * FROM {} WHERE meetup_id = '{}' AND response = '{}'\
         ".format(self.table, meetup_id, 'yes')
 
-        self.cur.execute(query)
-        result = self.cur.fetchall()
+        result = self.fetch_all(query)
         return len(result)

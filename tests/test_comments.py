@@ -11,7 +11,7 @@ class TestComment(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '22/01/2019',
+            'happening_on': '26/01/2019',
             'tags': ['Python']
         }
 
@@ -31,6 +31,7 @@ class TestComment(BaseTest):
 
         self.client.post('/api/v2/meetups', json=self.meetup,
                          headers=self.headers)
+
         self.client.post('/api/v2/questions', json=self.question,
                          headers=self.headers)
 
@@ -57,7 +58,7 @@ class TestComment(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_comment_question_empty_data(self):
         """ Test post comment with empty data """
@@ -70,7 +71,7 @@ class TestComment(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_comment(self):
         """ Test post comment successfully """
@@ -82,6 +83,20 @@ class TestComment(BaseTest):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Comment posted successfully')
+
+    def test_post_comment_duplicate(self):
+        """ Test post comment duplicate """
+
+        self.client.post('/api/v2/questions/1/comments',
+                         json=self.comment, headers=self.headers)
+
+        res = self.client.post('/api/v2/questions/1/comments',
+                               json=self.comment, headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Comment has been posted already')
 
     def test_fetch_all_comments_question_not_posted(self):
         """ Test fetch all comments for question that doesn't exist """
@@ -95,7 +110,7 @@ class TestComment(BaseTest):
 
     def test_fetch_all_comments(self):
         """ Test fetch all comments for a question """
-        
+
         self.client.post('/api/v2/questions/1/comments', json=self.comment,
                          headers=self.headers)
         self.client.post('/api/v2/questions/1/comments', json=self.comment2,
@@ -110,7 +125,7 @@ class TestComment(BaseTest):
 
     def test_fetch_all_comments_empty(self):
         """ Test fetch all comments for a question with none posted """
-        
+
         res = self.client.get('/api/v2/questions/1/comments')
         data = res.get_json()
 

@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash
 
 tables = [
     'users',
@@ -18,7 +17,7 @@ create_table_queries = [
         lastname VARCHAR(250) NOT NULL,
         othername VARCHAR(250) NULL,
         username VARCHAR(250) NOT NULL,
-        phonenumber VARCHAR(250) NULL,
+        phonenumber VARCHAR(250) NOT NULL,
         email VARCHAR(250) NOT NULL,
         password VARCHAR(250) NOT NULL,
         registered TIMESTAMP WITHOUT TIME ZONE \
@@ -54,8 +53,8 @@ create_table_queries = [
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
-        FOREIGN KEY (meetup_id) REFERENCES meetups(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (meetup_id) REFERENCES meetups(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
     """,
 
@@ -69,8 +68,8 @@ create_table_queries = [
         DEFAULT (NOW() AT TIME ZONE 'utc'),
         modified_at TIMESTAMP WITHOUT TIME ZONE \
         DEFAULT (NOW() AT TIME ZONE 'utc'),
-        FOREIGN KEY (question_id) REFERENCES questions(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
     """,
 
@@ -103,39 +102,3 @@ create_table_queries = [
     )
     """
 ]
-
-
-def truncate(connection):
-    """ Function to truncate database tables """
-
-    cur = connection.cursor()
-    cur.execute('TRUNCATE TABLE ' + ','.join(tables) + ' CASCADE')
-    connection.commit()
-
-
-def drop_tables(connection):
-    """ Function to drop tables """
-
-    cur = connection.cursor()
-    for table in tables:
-        cur.execute('DROP TABLE IF EXISTS {} CASCADE'.format(table))
-
-    connection.commit()
-
-
-def create_tables(connection):
-    """ Function to create tables """
-
-    cur = connection.cursor()
-    for query in create_table_queries:
-        cur.execute(query)
-
-    connection.commit()
-
-
-def seed(connection):
-    cur = connection.cursor()
-    cur.execute("INSERT INTO users (firstname, lastname, username, email, password, admin)\
-        VALUES ('Vincent', 'Tirgei', 'tirgei', 'admin@app.com', '{}', True)\
-        ".format(generate_password_hash('asf8$#Er0')))
-    connection.commit()

@@ -26,16 +26,21 @@ class Question(Resource):
         question_data = request.get_json()
 
         if not question_data:
-            message = 'No data provided'
+            message = 'No data provided in the request'
             status_code = 400
 
         else:
             try:
                 data = QuestionSchema().load(question_data)
+                meetup = data['meetup_id']
 
-                if not self.meetup_db.exists('id', data['meetup_id']):
+                if not self.meetup_db.exists('id', meetup):
                     message = 'Meetup not found'
                     status_code = 404
+
+                elif self.db.check_duplicate(meetup, data['body']):
+                    message = 'Question has been posted already'
+                    status_code = 409
 
                 else:
                     data['user_id'] = get_jwt_identity()
@@ -49,8 +54,8 @@ class Question(Resource):
             except ValidationError as err:
                 errors = err.messages
 
-                status_code = 400
-                message = 'Invalid data provided'
+                status_code = 422
+                message = 'Invalid data provided in the request'
                 response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})
@@ -107,10 +112,8 @@ class QuestionUpvote(Resource):
         else:
             voted = self.vote_model.voted(question_id, current_user)
 
-            print('### HAS VOTED: {} ###'.format(bool(voted)))
-
             if voted:
-                status_code = 403
+                status_code = 409
                 message = 'You have already voted for this question'
 
             else:
@@ -156,7 +159,7 @@ class QuestionDownvote(Resource):
             voted = self.vote_model.voted(question_id, current_user)
 
             if voted:
-                status_code = 403
+                status_code = 409
                 message = 'You have already voted for this question'
 
             else:

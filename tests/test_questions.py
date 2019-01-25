@@ -11,7 +11,7 @@ class TestQuestion(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '22/01/2019',
+            'happening_on': '26/01/2019',
             'tags': ['Python']
         }
 
@@ -55,9 +55,9 @@ class TestQuestion(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def post_question_no_data(self):
         """ Test post question with no data sent """
@@ -67,7 +67,7 @@ class TestQuestion(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_question_empty_data(self):
         """ Test post question with empty data sent """
@@ -80,7 +80,7 @@ class TestQuestion(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_post_question_missing_fields(self):
         """ Test post question with missing fields in data sent """
@@ -91,9 +91,9 @@ class TestQuestion(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_post_question(self):
         """ Test post question successfully """
@@ -105,6 +105,20 @@ class TestQuestion(BaseTest):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Question posted successfully')
+
+    def test_post_question_duplicate(self):
+        """ Test post question duplicate """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        res = self.client.post('/api/v2/questions', json=self.question,
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Question has been posted already')
 
     def test_fetch_all_questions_meetup_not_created(self):
         """ Test fetch all questions for a meetup that doesn't exist """
@@ -179,8 +193,8 @@ class TestQuestion(BaseTest):
                                 headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
         self.assertEqual(data['message'],
                          'You have already voted for this question')
 
@@ -222,7 +236,7 @@ class TestQuestion(BaseTest):
                                 headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
         self.assertEqual(data['message'],
                          'You have already voted for this question')

@@ -20,7 +20,7 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '22/01/2019',
+            'happening_on': '26/01/2019',
             'tags': ['Python']
         }
 
@@ -28,7 +28,7 @@ class TestMeetup(BaseTest):
             'topic': 'Android',
             'description': 'Getting started with Kotlin',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019',
+            'happening_on': '25/12/2019',
             'tags': ['Android']
         }
 
@@ -43,7 +43,7 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_create_meetup_empty_data(self):
         """ Test create meetup with no data sent """
@@ -56,7 +56,7 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_create_meetup_missing_fields(self):
         """ Test create meetup with missing fields in request """
@@ -67,9 +67,9 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_create_meetup_empty_fields(self):
         """ Test create meetup with empty fields in request """
@@ -80,9 +80,9 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_create_meetup(self):
         """ Test create meetup successfully """
@@ -104,9 +104,9 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_create_meetup_past_date(self):
         """ Test create meetup with a past date """
@@ -117,9 +117,9 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid data provided')
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['status'], 422)
+        self.assertEqual(data['message'], 'Invalid data provided in the request')
 
     def test_create_meetup_not_admin(self):
         """ Test create meetup when not admin """
@@ -133,8 +133,8 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(data['status'], 401)
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
         self.assertEqual(data['message'],
                          'Only admin is authorized to perform this operation')
 
@@ -149,8 +149,8 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
 
     def test_create_meetup_same_topic_same_day(self):
         """ Test create meetup same topic and same day """
@@ -163,8 +163,8 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
 
     def test_create_meetup_same_location_same_day(self):
         """ Test create meetup same location and same day """
@@ -177,8 +177,8 @@ class TestMeetup(BaseTest):
                                headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
 
     def test_fetch_all_meetups_empty(self):
         """ Test fetch all meetups with none created yet """
@@ -311,9 +311,9 @@ class TestMeetup(BaseTest):
         res = self.client.delete('api/v2/meetups/1', headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(data['status'], 401)
-        self.assertEqual(data['message'], 'Not authorized')
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['status'], 403)
+        self.assertEqual(data['message'], 'Only admin user is authorized to delete meetups')
 
     def test_rsvps_meetup_not_created(self):
         """ Test RSVP for meetup that hasn't been created """
@@ -337,7 +337,7 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'Invalid rsvp')
+        self.assertEqual(data['message'], 'Invalid rsvp. The allowed options are yes, no or maybe')
 
     def test_rsvps_yes(self):
         """ Test RSVPs yes to a meetup """
@@ -391,9 +391,9 @@ class TestMeetup(BaseTest):
         res = self.client.post('api/v2/meetups/1/maybe', headers=self.headers)
         data = res.get_json()
 
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(data['status'], 403)
-        self.assertEqual(data['message'], 'Meetup already responded')
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Reponse already sent for this meetup')
 
     def test_fetch_meetup_attendees_none(self):
         """ Test fetch attending users when none has rsvpd """
@@ -456,7 +456,7 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No data provided')
+        self.assertEqual(data['message'], 'No data provided in the request')
 
     def test_update_meetup_tags_empty_data(self):
         """ Test update meetup tags with empty data passed """
@@ -489,7 +489,7 @@ class TestMeetup(BaseTest):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['status'], 400)
-        self.assertEqual(data['message'], 'No meetup tags provided')
+        self.assertEqual(data['message'], 'No meetup tags provided in the request')
 
     def test_update_meetup_tags_successfully(self):
         """ Test update meetup tags successfully """
@@ -507,4 +507,3 @@ class TestMeetup(BaseTest):
         self.assertEqual(data['status'], 200)
         self.assertEqual(data['message'], 'Meetup tags updated successfully')
         self.assertEqual(len(data['data']['tags']), 2)
-
