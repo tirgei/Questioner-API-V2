@@ -325,7 +325,7 @@ class TestUser(BaseTest):
         data = res.get_json()
 
         self.assertEqual(res.status_code, 401)
-        self.assertEqual(data['message'], 'Token has been revoked')
+        self.assertEqual(data['message'], 'Token has expired or is invalid')
 
     def test_fetch_user_not_created(self):
         """ Test fetch user whose not been created """

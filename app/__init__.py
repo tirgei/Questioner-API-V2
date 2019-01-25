@@ -98,7 +98,7 @@ def handlers(app, jwt):
     def revoked_token():
         return jsonify({
             'status': 401,
-            'message': 'Token has been revoked'
+            'message': 'Token has expired or is invalid'
         }), 401
 
     @jwt.unauthorized_loader

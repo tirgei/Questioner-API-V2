@@ -22,39 +22,44 @@ class Register(Resource):
         message = ''
         response = {}
 
-        signup_data = request.get_json()
+        try:
+            signup_data = request.get_json()
 
-        if not signup_data:
+            if not signup_data:
+                status_code = 400
+                message = 'No data provided in the request'
+
+            else:
+                try:
+                    data = UserSchema().load(signup_data)
+
+                    if self.db.exists('email', data['email']):
+                        status_code = 409
+                        message = 'Email already exists'
+
+                    elif self.db.exists('username', data['username']):
+                        status_code = 409
+                        message = 'Username already exists'
+
+                    else:
+                        user = self.db.save(data)
+                        result = UserSchema(exclude=['password']).dump(user)
+
+                        status_code = 201
+                        message = 'User created successfully'
+                        response.update({
+                            'data': result
+                        })
+
+                except ValidationError as error:
+                    status_code = 422
+                    message = 'Invalid data provided in the request'
+
+                    response.update({'errors': error.messages})
+
+        except:
             status_code = 400
             message = 'No data provided in the request'
-
-        else:
-            try:
-                data = UserSchema().load(signup_data)
-
-                if self.db.exists('email', data['email']):
-                    status_code = 409
-                    message = 'Email already exists'
-
-                elif self.db.exists('username', data['username']):
-                    status_code = 409
-                    message = 'Username already exists'
-
-                else:
-                    user = self.db.save(data)
-                    result = UserSchema(exclude=['password']).dump(user)
-
-                    status_code = 201
-                    message = 'User created successfully'
-                    response.update({
-                        'data': result
-                    })
-
-            except ValidationError as error:
-                status_code = 422
-                message = 'Invalid data provided in the request'
-
-                response.update({'errors': error.messages})
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
@@ -73,55 +78,60 @@ class Login(Resource):
         status_code = 200
         response = {}
 
-        login_data = request.get_json()
+        try:
+            login_data = request.get_json()
 
-        if not login_data:
-            message = 'No data provided in the request'
-            status_code = 400
+            if not login_data:
+                message = 'No data provided in the request'
+                status_code = 400
 
-        else:
-            try:
-                data = UserSchema().load(login_data, partial=True)
-
+            else:
                 try:
-                    username = data['username']
-                    pw = data['password']
+                    data = UserSchema().load(login_data, partial=True)
 
-                    if not self.db.exists('username', username):
-                        status_code = 404
-                        message = 'User not found'
+                    try:
+                        username = data['username']
+                        pw = data['password']
 
-                    else:
-                        user = self.db.where('username', username)
-
-                        if not self.db.checkpassword(user['password'], pw):
-                            status_code = 400
-                            message = 'Incorrect password'
+                        if not self.db.exists('username', username):
+                            status_code = 404
+                            message = 'User not found'
 
                         else:
-                            access_token = create_access_token(
-                                identity=user['id'])
-                            refresh_token = create_refresh_token(
-                                identity=True)
+                            user = self.db.where('username', username)
 
-                            status_code = 200
-                            message = 'User logged in successfully'
-                            response.update({
-                                'access_token': access_token,
-                                'refresh_token': refresh_token,
-                                'user_id': user['id']
-                            })
+                            if not self.db.checkpassword(user['password'], pw):
+                                status_code = 400
+                                message = 'Incorrect password'
 
-                except:
-                    status_code = 400
-                    message = 'Invalid credentials provided'
+                            else:
+                                access_token = create_access_token(
+                                    identity=user['id'])
+                                refresh_token = create_refresh_token(
+                                    identity=True)
 
-            except ValidationError as error:
-                errors = error.messages
+                                status_code = 200
+                                message = 'User logged in successfully'
+                                response.update({
+                                    'access_token': access_token,
+                                    'refresh_token': refresh_token,
+                                    'user_id': user['id']
+                                })
 
-                status_code = 422
-                message = 'Invalid data provided in the request'
-                response.update({'errors': errors})
+                    except:
+                        status_code = 400
+                        message = 'Invalid credentials provided'
+
+                except ValidationError as error:
+                    errors = error.messages
+
+                    status_code = 422
+                    message = 'Invalid data provided in the request'
+                    response.update({'errors': errors})
+
+        except:
+            message = 'No data provided in the request'
+            status_code = 400
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
