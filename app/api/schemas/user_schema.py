@@ -10,7 +10,7 @@ class UserSchema(Schema):
     lastname = fields.Str(required=True, validate=(required, name))
     username = fields.Str(required=True, validate=(required, name))
     othername = fields.Str(required=False, validate=(name))
-    phonenumber = fields.Str(required=False, validate=(phonenumber))
+    phonenumber = fields.Str(required=True, validate=(phonenumber))
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=(required, password))
     registered = fields.DateTime(dump_only=True)

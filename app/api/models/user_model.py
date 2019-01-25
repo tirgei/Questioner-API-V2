@@ -32,10 +32,10 @@ class UserModel(Model):
     def save(self, data):
         """ Function to save new user """
 
-        query = "INSERT INTO {} (firstname, lastname, username, email, \
-        password) VALUES ('{}', '{}', '{}', '{}', '{}') RETURNING *".format(
+        query = "INSERT INTO {} (firstname, lastname, username, phonenumber, email, \
+        password) VALUES ('{}', '{}', '{}', '{}', '{}', '{}') RETURNING *".format(
             self.table, data['firstname'],
-            data['lastname'], data['username'], data['email'],
+            data['lastname'], data['username'], data['phonenumber'], data['email'],
             generate_password_hash(data['password'])
         )
 

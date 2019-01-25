@@ -17,7 +17,7 @@ create_table_queries = [
         lastname VARCHAR(250) NOT NULL,
         othername VARCHAR(250) NULL,
         username VARCHAR(250) NOT NULL,
-        phonenumber VARCHAR(250) NULL,
+        phonenumber VARCHAR(250) NOT NULL,
         email VARCHAR(250) NOT NULL,
         password VARCHAR(250) NOT NULL,
         registered TIMESTAMP WITHOUT TIME ZONE \

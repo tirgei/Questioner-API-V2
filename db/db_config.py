@@ -92,8 +92,8 @@ class DatabaseConnection:
         result = cur.fetchone()
 
         if not result:
-            cur.execute("INSERT INTO users (firstname, lastname, username, email,\
-            password, admin) VALUES ('Vincent', 'Tirgei', 'tirgei', \
+            cur.execute("INSERT INTO users (firstname, lastname, username, phonenumber, email,\
+            password, admin) VALUES ('Vincent', 'Tirgei', 'tirgei', '0712345678',\
             'admin@app.com', '{}', True)\
             ".format(generate_password_hash('asf8$#Er0')))
             conn.commit()
