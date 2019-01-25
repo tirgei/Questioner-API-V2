@@ -32,10 +32,15 @@ class Question(Resource):
         else:
             try:
                 data = QuestionSchema().load(question_data)
+                meetup = data['meetup_id']
 
-                if not self.meetup_db.exists('id', data['meetup_id']):
+                if not self.meetup_db.exists('id', meetup):
                     message = 'Meetup not found'
                     status_code = 404
+
+                elif self.db.check_duplicate(meetup, data['body']):
+                    message = 'Question has been posted already'
+                    status_code = 409
 
                 else:
                     data['user_id'] = get_jwt_identity()

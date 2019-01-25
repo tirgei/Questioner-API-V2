@@ -28,10 +28,28 @@ class CommentModel(Model):
         return self.insert(query)
 
     def exists(self, key, value):
-        pass
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+
+        result = self.fetch_all(query)
+        return len(result) > 0
 
     def where(self, key, value):
-        pass
+        query = "SELECT * FROM {} WHERE {} = '{}'".format(
+            self.table, key, value)
+
+        return self.fetch_one(query)
 
     def delete(self, id):
         pass
+
+    def check_duplicate(self, question_id, body):
+        """ Function to check if comment is a duplicate """
+
+        if self.exists('question_id', question_id):
+            comment = self.where('question_id', question_id)
+
+            if comment['body'] == body:
+                return True
+
+        return False

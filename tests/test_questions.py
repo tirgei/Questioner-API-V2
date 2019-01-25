@@ -106,6 +106,20 @@ class TestQuestion(BaseTest):
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Question posted successfully')
 
+    def test_post_question_duplicate(self):
+        """ Test post question duplicate """
+
+        self.client.post('/api/v2/questions', json=self.question,
+                         headers=self.headers)
+
+        res = self.client.post('/api/v2/questions', json=self.question,
+                               headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Question has been posted already')
+
     def test_fetch_all_questions_meetup_not_created(self):
         """ Test fetch all questions for a meetup that doesn't exist """
 

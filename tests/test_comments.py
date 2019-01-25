@@ -84,6 +84,20 @@ class TestComment(BaseTest):
         self.assertEqual(data['status'], 201)
         self.assertEqual(data['message'], 'Comment posted successfully')
 
+    def test_post_comment_duplicate(self):
+        """ Test post comment duplicate """
+
+        self.client.post('/api/v2/questions/1/comments',
+                         json=self.comment, headers=self.headers)
+
+        res = self.client.post('/api/v2/questions/1/comments',
+                               json=self.comment, headers=self.headers)
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(data['status'], 409)
+        self.assertEqual(data['message'], 'Comment has been posted already')
+
     def test_fetch_all_comments_question_not_posted(self):
         """ Test fetch all comments for question that doesn't exist """
 

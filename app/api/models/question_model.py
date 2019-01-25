@@ -67,3 +67,14 @@ class QuestionModel(Model):
 
     def delete(self, id):
         pass
+
+    def check_duplicate(self, meetup_id, body):
+        """ Function to check if comment is a duplicate """
+
+        if self.exists('meetup_id', meetup_id):
+            question = self.where('meetup_id', meetup_id)
+
+            if question['body'] == body:
+                return True
+
+        return False

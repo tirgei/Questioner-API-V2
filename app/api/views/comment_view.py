@@ -36,14 +36,19 @@ class Comment(Resource):
             try:
                 data = CommentSchema().load(comment_data)
 
-                data['user_id'] = get_jwt_identity()
-                data['question_id'] = question_id
-                comment = self.db.save(data)
-                result = CommentSchema().dump(comment)
+                if self.db.check_duplicate(question_id, data['body']):
+                    message = 'Comment has been posted already'
+                    status_code = 409
 
-                status_code = 201
-                message = 'Comment posted successfully'
-                response.update({'data': result})
+                else:
+                    data['user_id'] = get_jwt_identity()
+                    data['question_id'] = question_id
+                    comment = self.db.save(data)
+                    result = CommentSchema().dump(comment)
+
+                    status_code = 201
+                    message = 'Comment posted successfully'
+                    response.update({'data': result})
 
             except ValidationError as err:
                 errors = err.messages
