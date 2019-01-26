@@ -32,35 +32,41 @@ class Meetups(Resource):
             status_code = 403
 
         else:
-            meetup_data = request.get_json()
 
-            if not meetup_data:
+            try:
+                meetup_data = request.get_json()
+
+                if not meetup_data:
+                    message = 'No data provided in the request'
+                    status_code = 400
+
+                else:
+                    try:
+                        data = MeetupSchema().load(meetup_data)
+                        duplicate, msg = self.db.check_if_duplicate(data)
+
+                        if duplicate:
+                            status_code = 409
+                            message = msg
+
+                        else:
+                            new_meetup = self.db.save(data)
+                            result = MeetupSchema().dump(new_meetup)
+
+                            status_code = 201
+                            message = 'Meetup created successfully'
+                            response.update({'data': result})
+
+                    except ValidationError as err:
+                        errors = err.messages
+
+                        status_code = 422
+                        message = 'Invalid data provided in the request'
+                        response.update({'errors': errors})
+
+            except:
                 message = 'No data provided in the request'
                 status_code = 400
-
-            else:
-                try:
-                    data = MeetupSchema().load(meetup_data)
-                    duplicate, msg = self.db.check_if_duplicate(data)
-
-                    if duplicate:
-                        status_code = 409
-                        message = msg
-
-                    else:
-                        new_meetup = self.db.save(data)
-                        result = MeetupSchema().dump(new_meetup)
-
-                        status_code = 201
-                        message = 'Meetup created successfully'
-                        response.update({'data': result})
-
-                except ValidationError as err:
-                    errors = err.messages
-
-                    status_code = 422
-                    message = 'Invalid data provided in the request'
-                    response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})
         return response, status_code

@@ -23,40 +23,45 @@ class Question(Resource):
         status_code = 200
         response = {}
 
-        question_data = request.get_json()
+        try:
+            question_data = request.get_json()
 
-        if not question_data:
+            if not question_data:
+                message = 'No data provided in the request'
+                status_code = 400
+
+            else:
+                try:
+                    data = QuestionSchema().load(question_data)
+                    meetup = data['meetup_id']
+
+                    if not self.meetup_db.exists('id', meetup):
+                        message = 'Meetup not found'
+                        status_code = 404
+
+                    elif self.db.check_duplicate(meetup, data['body']):
+                        message = 'Question has been posted already'
+                        status_code = 409
+
+                    else:
+                        data['user_id'] = get_jwt_identity()
+                        question = self.db.save(data)
+                        result = QuestionSchema().dump(question)
+
+                        status_code = 201
+                        message = 'Question posted successfully'
+                        response.update({'data': result})
+
+                except ValidationError as err:
+                    errors = err.messages
+
+                    status_code = 422
+                    message = 'Invalid data provided in the request'
+                    response.update({'errors': errors})
+
+        except:
             message = 'No data provided in the request'
             status_code = 400
-
-        else:
-            try:
-                data = QuestionSchema().load(question_data)
-                meetup = data['meetup_id']
-
-                if not self.meetup_db.exists('id', meetup):
-                    message = 'Meetup not found'
-                    status_code = 404
-
-                elif self.db.check_duplicate(meetup, data['body']):
-                    message = 'Question has been posted already'
-                    status_code = 409
-
-                else:
-                    data['user_id'] = get_jwt_identity()
-                    question = self.db.save(data)
-                    result = QuestionSchema().dump(question)
-
-                    status_code = 201
-                    message = 'Question posted successfully'
-                    response.update({'data': result})
-
-            except ValidationError as err:
-                errors = err.messages
-
-                status_code = 422
-                message = 'Invalid data provided in the request'
-                response.update({'errors': errors})
 
         response.update({'status': status_code, 'message': message})
         return response, status_code
