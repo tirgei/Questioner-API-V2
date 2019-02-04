@@ -20,7 +20,7 @@ class TestMeetup(BaseTest):
             'topic': 'Leveling up with Python',
             'description': 'Reprehenderit sunt aliquip aliquip exercitation.',
             'location': 'Andela HQ, Nairobi',
-            'happening_on': '30/01/2019',
+            'happening_on': '10/02/2019',
             'tags': ['Python']
         }
 
@@ -233,7 +233,7 @@ class TestMeetup(BaseTest):
     def test_fetch_upcoming_meetups_none(self):
         """ Test fetch upcoming meetups with none in the next 1 week"""
 
-        self.meetup.update({'happening_on': '12/02/2019'})
+        self.meetup.update({'happening_on': '18/02/2019'})
 
         self.client.post('/api/v2/meetups', json=self.meetup,
                          headers=self.headers)
