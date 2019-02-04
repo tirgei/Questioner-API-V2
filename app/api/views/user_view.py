@@ -4,6 +4,7 @@ from ..models.user_model import UserModel
 from ..schemas.user_schema import UserSchema
 from marshmallow import ValidationError
 from app.api.models.token_model import RevokedTokenModel
+from datetime import timedelta
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, get_jwt_identity,
                                 jwt_refresh_token_required, get_raw_jwt)
@@ -108,7 +109,8 @@ class Login(Resource):
                                 access_token = create_access_token(
                                     identity=user['id'])
                                 refresh_token = create_refresh_token(
-                                    identity=True)
+                                    identity=True,
+                                    expires_delta=timedelta(days=365))
 
                                 status_code = 200
                                 message = 'User logged in successfully'
